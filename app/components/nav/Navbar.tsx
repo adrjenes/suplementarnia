@@ -2,6 +2,7 @@ import Container from "@/app/components/Container";
 
 import Link from "next/link";
 import Image from "next/image";
+import CartCount from "@/app/components/nav/CartCount";
 
 
 const Navbar = () => {
@@ -13,7 +14,7 @@ const Navbar = () => {
                         <Link href="/"><Image src="/images/logo.png" alt="logo_suplementarnia" width={180} height={60} priority/></Link>
                         <div className="hidden md:block">Search</div>
                         <div className="flex items-center gap-8 md:gap-12">
-                            <div>CartCount</div>
+                            <CartCount/>
                             <div>UserMenu</div>
                         </div>
                     </div>
