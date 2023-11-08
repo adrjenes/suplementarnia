@@ -1,7 +1,7 @@
 "use client"
 
 import Heading from "@/app/components/Heading";
-import {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {FieldValues, SubmitHandler, useForm} from "react-hook-form";
 import Input from "@/app/components/inputs/input";
 import Button from "@/app/components/Button";
@@ -11,8 +11,13 @@ import {signIn} from "next-auth/react";
 import {callback} from "next-auth/core/routes";
 import toast from "react-hot-toast";
 import {useRouter} from "next/navigation";
+import {SafeUser} from "@/types";
 
-const LoginForm = () => {
+interface LoginFormProps {
+    currentUser: SafeUser | null
+}
+
+const LoginForm: React.FC<LoginFormProps> = ({currentUser}) => {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const {
@@ -25,6 +30,13 @@ const LoginForm = () => {
             password: ""
         },
     });
+
+    useEffect(() => {
+        if (currentUser) {
+            router.push("/cart")
+            router.refresh();
+        }
+    }, []);
 
     const onSubmit: SubmitHandler<FieldValues> = (data) => {
         setIsLoading(true);
@@ -44,11 +56,14 @@ const LoginForm = () => {
         })
     }
 
+    if (currentUser) {
+        return <p className="text-center">Zalogowano. Przekierowuje...</p>
+    }
+
     return (
         <>
             <Heading title="Zaloguj się"/>
-            <Button outline label="Zaloguj się z Google" icon={AiOutlineGoogle} onClick={() => {
-            }}/>
+            <Button outline label="Zaloguj się z Google" icon={AiOutlineGoogle} onClick={() => {signIn('google')}}/>
             <hr className="bg-slate-300 w-full h-px"/>
             <Input
                 id="email"
