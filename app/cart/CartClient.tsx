@@ -6,9 +6,18 @@ import Heading from "@/app/components/Heading";
 import Button from "@/app/components/Button";
 import ItemContent from "@/app/cart/ItemContent";
 import {formatPrice} from "@/utils/formatPrice";
+import {SafeUser} from "@/types";
+import {useRouter} from "next/navigation";
+import React from "react";
 
-const CartClient = () => {
+interface CartClientProps {
+    currentUser: SafeUser | null;
+}
+
+const CartClient: React.FC<CartClientProps> = ({currentUser}) => {
     const {cartProducts, handleClearCart, cartTotalAmount} = useCart();
+
+    const router = useRouter();
 
     if (!cartProducts || cartProducts.length == 0) {
         return (
@@ -47,8 +56,11 @@ const CartClient = () => {
                     <span>{formatPrice(cartTotalAmount)}</span>
                 </div>
                 <p className="text-slate-500">VAT i przesyłka obliczane przy podsumowaniu koszyka</p>
-                <Button label="Podsumowanie" onClick={() => {
-                }}/>
+                <Button
+                    label={currentUser ? 'Przejdź do płatności' : 'Zaloguj się, aby przejść do płatności'}
+                    outline = {currentUser ? false : true}
+                    onClick={() => {currentUser ? router.push('/checkout') : router.push('/login')}}
+                />
                 <Link href={"/"} className="text-green-700 flex items-center gap-1">
                     <MdArrowBack/>
                     <span>Kontynuuj zakupy</span>
