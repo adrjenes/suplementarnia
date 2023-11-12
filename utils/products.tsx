@@ -2,23 +2,25 @@ export const products = [
     {
         id: "64a654593e91b8e73a351e9b",
         name: "iphone 14",
-        description: "Short description",
+        description: "Opis produktu:",
         price: 2999,
         brand: "apple",
         category: "Phone",
         inStock: true,
         images: [
             {
-                color: "White",
-                colorCode: "#FFFFFF",
-                image:
-                    "https://firebasestorage.googleapis.com/v0/b/ecommerce-shop-cc542.appspot.com/o/products%2F1688622161445-iphone14-white.png?alt=media&token=fe2065e5-fdfe-4a6f-baa6-380b5fad90b8",
+                image: "https://firebasestorage.googleapis.com/v0/b/ecommerce-shop-cc542.appspot.com/o/products%2F1688622161445-iphone14-white.png?alt=media&token=fe2065e5-fdfe-4a6f-baa6-380b5fad90b8",
             },
             {
-                color: "Gray",
-                colorCode: "#808080",
-                image:
-                    "https://firebasestorage.googleapis.com/v0/b/ecommerce-shop-cc542.appspot.com/o/products%2F1688622165836-iphone14-gray.png?alt=media&token=58f684db-998e-43eb-aa06-efe3d6ccfad4",
+                image: "https://firebasestorage.googleapis.com/v0/b/ecommerce-shop-cc542.appspot.com/o/products%2F1688622165836-iphone14-gray.png?alt=media&token=58f684db-998e-43eb-aa06-efe3d6ccfad4",
+            },
+        ],
+        details: [
+            {
+                flavour: "Cola",
+            },
+            {
+                flavour: "Apple",
             },
         ],
         reviews: [],
@@ -34,10 +36,12 @@ export const products = [
         inStock: true,
         images: [
             {
-                color: "Black",
-                colorCode: "#000000",
-                image:
-                    "https://firebasestorage.googleapis.com/v0/b/ecommerce-shop-cc542.appspot.com/o/products%2F1688529886610-black-logitech-keyboard.jpg?alt=media&token=353aa276-1316-4e50-bc26-8e3828fe6cdd",
+                image: "https://firebasestorage.googleapis.com/v0/b/ecommerce-shop-cc542.appspot.com/o/products%2F1688529886610-black-logitech-keyboard.jpg?alt=media&token=353aa276-1316-4e50-bc26-8e3828fe6cdd",
+            }
+        ],
+        details: [
+            {
+                flavour: "Cola",
             },
         ],
         reviews: [
@@ -74,22 +78,27 @@ export const products = [
         inStock: true,
         images: [
             {
-                color: "Black",
-                colorCode: "#000000",
                 image:
                     "https://firebasestorage.googleapis.com/v0/b/ecommerce-shop-cc542.appspot.com/o/products%2F1686386605041-iphone12-black.jpg?alt=media&token=32abf316-ddf6-4870-9e1e-a7c884b750d6",
             },
             {
-                color: "Blue",
-                colorCode: " #0000FF",
                 image:
                     "https://firebasestorage.googleapis.com/v0/b/ecommerce-shop-cc542.appspot.com/o/products%2F1686386607274-iphone12-blue.jpg?alt=media&token=e83a9b13-86b6-4518-9f1e-8ddef12ba9a2",
             },
             {
-                color: "Red",
-                colorCode: "#FF0000",
                 image:
                     "https://firebasestorage.googleapis.com/v0/b/ecommerce-shop-cc542.appspot.com/o/products%2F1686386608652-iphone12-red.jpg?alt=media&token=603a9e86-5b8c-4f8d-b61c-c1c77e60e954",
+            }
+        ],
+        details: [
+            {
+                flavour: "Cola",
+            },
+            {
+                flavour: "Sprite",
+            },
+            {
+                flavour: "Pepsi",
             },
         ],
         reviews: [
@@ -140,17 +149,20 @@ export const products = [
         id: "64a4e9e77e7299078334019f",
         name: "Logitech MX Master 2S Wireless Mouse – Use on Any Surface, Hyper-Fast Scrolling, Ergonomic Shape, Rechargeable, Control Upto 3 Apple Mac and Windows Computers, Graphite",
         description:
-            "Cross computer control: Game changing capacity to navigate seamlessly on 3 computers, and copy paste text, images, and files from 1 to the other using Logitech flow\nDual connectivity: Use with upto 3 Windows or Mac computers via included Unifying receiver or Bluetooth Smart wireless technology. Gesture button- Yes",
+            "Cross computer control: Game changing capacity to navigate seamlessly on 3 computers, and copy paste text, details, and files from 1 to the other using Logitech flow\nDual connectivity: Use with upto 3 Windows or Mac computers via included Unifying receiver or Bluetooth Smart wireless technology. Gesture button- Yes",
         price: 70,
         brand: "logitech",
         category: "Accesories",
         inStock: true,
         images: [
             {
-                color: "Graphite",
-                colorCode: " #383838",
                 image:
                     "https://firebasestorage.googleapis.com/v0/b/ecommerce-shop-cc542.appspot.com/o/products%2F1688529379028-logitech-graphite-mouse.jpg?alt=media&token=f9dfba29-832f-4c58-88c6-a7a0ae6b22bf",
+            }
+        ],
+        details: [
+            {
+                flavour: "Cola",
             },
         ],
         reviews: [],
@@ -166,16 +178,18 @@ export const products = [
         inStock: true,
         images: [
             {
-                color: "Black",
-                colorCode: "#000000",
-                image:
-                    "https://firebasestorage.googleapis.com/v0/b/ecommerce-shop-cc542.appspot.com/o/products%2F1688041293609-watch-black.jpg?alt=media&token=270f918c-d9f5-41a2-ad32-45d5f3c66bf0",
+                image: "https://firebasestorage.googleapis.com/v0/b/ecommerce-shop-cc542.appspot.com/o/products%2F1688041293609-watch-black.jpg?alt=media&token=270f918c-d9f5-41a2-ad32-45d5f3c66bf0",
             },
             {
-                color: "Silver",
-                colorCode: "#C0C0C0",
-                image:
-                    "https://firebasestorage.googleapis.com/v0/b/ecommerce-shop-cc542.appspot.com/o/products%2F1688041295389-watch-silver.jpg?alt=media&token=7341e7f0-5c29-4f91-a7e3-57e50faafb74",
+                image: "https://firebasestorage.googleapis.com/v0/b/ecommerce-shop-cc542.appspot.com/o/products%2F1688041295389-watch-silver.jpg?alt=media&token=7341e7f0-5c29-4f91-a7e3-57e50faafb74",
+            }
+        ],
+        details: [
+            {
+                flavour: "Cola",
+            },
+            {
+                flavour: "Pepsi",
             },
         ],
         reviews: [],

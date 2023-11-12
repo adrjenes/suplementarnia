@@ -29,23 +29,26 @@ const UserMenu: React.FC<UserMenuProps> = ({currentUser}) => {
                     <div className="absolute rounded-md shadow-md w-[170px] bg-white overflow-hidden right-0 top-12 text-sm flex flex-col cursor-pointer">
                         {currentUser ?
                             <div>
-                            <Link href="/orders">
-                                <MenuItem onClick={toggleOpen}>
-                                    Zamówienia
-                                </MenuItem>
-                            </Link>
-                            <Link href="/admin">
-                                <MenuItem onClick={toggleOpen}>
-                                    Admin panel
-                                </MenuItem>
-                            </Link>
-                            <hr/>
-                            <MenuItem onClick={() =>  {
-                                toggleOpen();
-                                signOut();
-                            }}
-                            >
-                                Wyloguj
+                                <Link href="/orders">
+                                    <MenuItem onClick={toggleOpen}>
+                                        Zamówienia
+                                    </MenuItem>
+                                </Link>
+                                {currentUser.role === 'ADMIN' ?
+                                    <Link href="/admin">
+                                        <MenuItem onClick={toggleOpen}>
+                                            Admin panel
+                                        </MenuItem>
+                                    </Link> :
+                                    ""
+                                }
+                                <hr/>
+                                <MenuItem onClick={() => {
+                                    toggleOpen();
+                                    signOut();
+                                }}
+                                >
+                                    Wyloguj
                             </MenuItem>
                         </div>
                             :

@@ -49,7 +49,8 @@ model Product {
   brand             String
   category          String
   inStock           Boolean
-  images             Image[]
+  images            Image[]
+  details           Flavour[]
   reviews           Review[]
 }
 
@@ -86,15 +87,17 @@ type CartProductType {
   description       String
   category          String
   brand             String
-  selectedImg       Image
+  selectedImage     Image
+  selectedFlavour   Flavour
   quantity          Int
   price             Float
 }
 
 type Image {
-  color             String
-  colorCode         String
   image             String
+}
+type Flavour {
+  flavour           String
 }
 
 type Address {
