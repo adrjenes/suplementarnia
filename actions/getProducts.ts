@@ -1,7 +1,7 @@
 
 export interface IProductParams {
     category?: string | null;
-    serchTerm?: string | null;
+    searchTerm?: string | null;
 }
 export default async function getProducts(params: IProductParams) {
     try {
