@@ -21,8 +21,8 @@ const UserMenu: React.FC<UserMenuProps> = ({currentUser}) => {
     return (
         <>
             <div className="relative z-30">
-                <div onClick={toggleOpen} className="p-2 border-[1px] border-slate-400 flex flex-row items-center gap-1 rounded-full cursor-pointer hover:shadow-md transition text-slate-700">
-                    <Avatar src={currentUser?.image}/>
+                <div onClick={toggleOpen} className="p-2 border-[2px] border-slate-400 flex flex-row items-center gap-1 rounded-full cursor-pointer hover:shadow-md transition text-slate-700 hover:text-green-700 hover:border-green-600">
+                    <p className="text-xs">{currentUser?.name}</p>
                     <AiFillCaretDown/>
                 </div>
                 {isOpen && (
@@ -55,7 +55,7 @@ const UserMenu: React.FC<UserMenuProps> = ({currentUser}) => {
                             <div>
                                 <Link href="/login">
                                     <MenuItem onClick={toggleOpen}>
-                                        Zaloguj
+                                        <a>Zaloguj</a>
                                     </MenuItem>
                                 </Link>
                                 <Link href="/register">

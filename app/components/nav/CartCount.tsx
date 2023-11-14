@@ -3,6 +3,8 @@
 import {useCart} from "@/hooks/useCart";
 import {useRouter} from "next/navigation";
 import {CiShoppingCart} from "react-icons/ci";
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import {FiShoppingCart} from "react-icons/fi";
 
 const CartCount = () => {
     const { cartTotalQty } = useCart();
@@ -10,17 +12,17 @@ const CartCount = () => {
 
     return (
         <div
-            className="relative cursor-pointer"
+            className="relative cursor-pointer pt-2 pr-3"
             onClick={() => router.push("/cart")}
             >
             <div className="text-3xl">
-                <CiShoppingCart/>
+                <FiShoppingCart className="hover:text-green-700"/>
             </div>
             <span
                 className="absolute
-                top-[-10px]
-                right-[-10px]
-                bg-slate-700
+                top-[-2px]
+                right-[-2px]
+                bg-green-700
                 text-white
                 h-6
                 w-6

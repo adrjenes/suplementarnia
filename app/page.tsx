@@ -4,6 +4,7 @@ import {products} from "@/utils/products";
 import ProductCard from "@/app/components/products/ProductCard";
 import getProducts, {IProductParams} from "@/actions/getProducts";
 import NullData from "@/app/components/NullData";
+import List from "@/app/components/list/List";
 
 interface HomeProps {
   searchParams: IProductParams
@@ -26,17 +27,19 @@ export default async function Home({searchParams}: HomeProps) {
   const shuffledProducts = shuffleArray(products);
 
   return (
-      <div className="p-8">
-    <Container>
       <div>
-        <HomeBanner/>
+        <List/>
+        <div className="p-8">
+          <Container>
+            <HomeBanner/>
+            <div
+                className="pt-20 grid grid-cols-2 ssm:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl-grid-cols-5 2xl: grid-cols-6 gap-8">
+              {shuffledProducts.map((product: any) => {
+                return <ProductCard key={product.id} data={product}/>
+              })}
+            </div>
+          </Container>
+        </div>
       </div>
-      <div className="pt-20 grid grid-cols-2 ssm:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl-grid-cols-5 2xl: grid-cols-6 gap-8">
-        {shuffledProducts.map((product:any) => {
-          return <ProductCard key={product.id} data={product}/>
-        })}
-      </div>
-    </Container>
-  </div>
   )
 }
