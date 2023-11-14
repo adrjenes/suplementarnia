@@ -16,12 +16,13 @@ const List = () => {
                     }}
                          onMouseLeave={() => {
                          setIsHovering(false)
-                    }
-                    }
-
+                    }}
                     >
                         Kategoria 1
                         <AiFillCaretDown className="text-white"/>
+                        <div>
+                            {isHovering && <ListTouch/>}
+                        </div>
                     </div>
                     <div className="flex-1 text-center flex items-center justify-center gap-1 text-white border-r border-green-600 hover:bg-green-700">
                         Kategorie 2
@@ -47,9 +48,7 @@ const List = () => {
             </Container>
         </div>
         <Container>
-            <div className="bg-red-500">
-            {isHovering && <ListTouch onMouseEvent={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}/>}
-            </div>
+
         </Container>
     </>;
 };
