@@ -88,7 +88,7 @@ type CartProductType {
   category          String
   brand             String
   selectedImage     Image
-  selectedFlavour   Flavour
+  selectedFlavour   Flavour[]
   quantity          Int
   price             Float
 }
@@ -98,6 +98,7 @@ type Image {
 }
 type Flavour {
   flavour           String
+  quantity          Int
 }
 
 type Address {

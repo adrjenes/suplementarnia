@@ -12,7 +12,7 @@ import Button from "@/app/components/Button";
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string);
 
 const CheckoutClient = () => {
-    const { cartProducts, paymentIntent, handleSetPaymentIntent } = useCart();
+    const {cartProducts, paymentIntent, handleSetPaymentIntent } = useCart();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
     const [clientSecret, setClientSecret] = useState('');
@@ -24,14 +24,30 @@ const CheckoutClient = () => {
     console.log("clientSecret ", clientSecret);
 
     useEffect(() => {
+
         if (cartProducts) {
+            const mergedProducts = {};
+
+            cartProducts.forEach(product => {
+                if (!mergedProducts[product.id]) {
+                    // Tworzymy nowy produkt z pustą listą smaków
+                    mergedProducts[product.id] = { ...product, selectedFlavour: [{ ...product.selectedFlavour }] };
+                } else {
+                    // Dodajemy nowy smak do istniejącej listy
+                    mergedProducts[product.id].selectedFlavour.push({ ...product.selectedFlavour });
+                }
+            });
+
+            const finalCartProducts = Object.values(mergedProducts);
+            console.log("final", finalCartProducts)
+            console.log("cart", cartProducts)
             setLoading(true)
             setError(false)
             fetch('/api/create-payment-intent', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
-                    items: cartProducts,
+                    items: finalCartProducts,
                     payment_intent_id: paymentIntent
                 })
             }).then((res) => {
@@ -63,6 +79,30 @@ const CheckoutClient = () => {
         setPaymentSuccess(value);
     }, []);
 
+    useEffect(() => {
+        if (paymentSuccess) {
+            localStorage.removeItem("eShopPaymentIntent");
+        }
+    }, [paymentSuccess]);
+    useEffect(() => {
+        if (paymentSuccess && cartProducts) {
+            // Funkcja do wysyłania żądania aktualizacji ilości produktów
+            const updateProductQuantities = async () => {
+                try {
+                    await fetch('/api/update-product-quantities', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({products: cartProducts})
+                    });
+                    // Dodatkowe akcje po pomyślnej aktualizacji, np. powiadomienia
+                } catch (error) {
+                    console.error('Błąd podczas aktualizacji ilości produktów', error);
+                }
+            };
+
+            updateProductQuantities();
+        }
+    }, [paymentSuccess, cartProducts]);
     return <div className="w-full">
         {clientSecret && cartProducts && (
             <Elements options={options} stripe={stripePromise}>

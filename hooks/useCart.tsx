@@ -53,74 +53,79 @@ export const CartContextProvider = (props: Props) => {
             }
         }
         getTotals();
+        console.log(cartProducts)
     }, [cartProducts])
 
-    const handleAddProductToCart = useCallback((product: CartProductType) => {
-        setCartProducts((prev) => {
-            let updatedCart;
-            if (prev) {
-                updatedCart = [...prev, product];
-            } else {
-                updatedCart = [product];
-            }
+    const handleAddProductToCart = useCallback((productToAdd: CartProductType) => {
+        setCartProducts((prevProducts) => {
+            const existingProducts = prevProducts || [];
 
-            localStorage.setItem('eShopCartItems', JSON.stringify(updatedCart))
-            return updatedCart;
-        })
+            const isProductAlreadyInCart = existingProducts.some(
+                item => item.id === productToAdd.id && item.selectedFlavour.flavour === productToAdd.selectedFlavour.flavour
+            );
+
+            if (isProductAlreadyInCart) {
+                toast.error('Produkt o tym smaku znajduje się już w koszyku.');
+                return existingProducts; // Nie dodawaj produktu, zwróć obecny stan koszyka
+            } else {
+                const updatedCart = [...existingProducts, productToAdd];
+                localStorage.setItem('eShopCartItems', JSON.stringify(updatedCart));
+                return updatedCart;
+            }
+        });
     }, []);
 
-    const handleRemoveProductFromCart = useCallback((
-        product: CartContextType
-    ) => {
+    const handleRemoveProductFromCart = useCallback((productToRemove: CartProductType) => {
+        window.location.reload();
         if (cartProducts) {
+            console.log("Usuwanie produktu:", productToRemove);
             const filteredProducts = cartProducts.filter((item) => {
-                return item.id !== product.id
-            })
+                // Usuń produkt tylko jeśli zgadzają się ID i smak
+                return !(item.id === productToRemove.id && item.selectedFlavour.flavour === productToRemove.selectedFlavour.flavour);
+            });
+            console.log("Po usunięciu:", filteredProducts);
+
             setCartProducts(filteredProducts);
-            toast.success("Produkt został usunięty")
+            toast.success("Produkt został usunięty");
             localStorage.setItem("eShopCartItems", JSON.stringify(filteredProducts));
         }
-    }, [cartProducts])
+    }, [cartProducts]);
 
     const handleCartQtyIncrease = useCallback((product: CartProductType) => {
-        let updatedCart;
-
-        if (product.quantity === 99) {
-            return toast.error("Limit został przekroczony.");
-        }
-        if (cartProducts) {
-            updatedCart = [...cartProducts]
-        }
-        const existingIndex = cartProducts?.findIndex((item) => item.id === product.id);
-
-        if (existingIndex > -1) {
-            updatedCart[existingIndex].quantity = ++updatedCart[existingIndex].quantity
+        if (product.quantity >= product.maxQuantity) {
+            return toast.error("Osiągnięto maksymalną ilość tego produktu.");
         }
 
-        setCartProducts(updatedCart);
-        localStorage.setItem("eShopCartItems", JSON.stringify(updatedCart))
+        setCartProducts((prevProducts) => {
+            const updatedCart = prevProducts.map(item => {
+                if (item.id === product.id && item.selectedFlavour.flavour === product.selectedFlavour.flavour) {
+                    return { ...item, quantity: item.quantity + 1 };
+                }
+                return item;
+            });
 
-    }, [cartProducts]);
+            localStorage.setItem("eShopCartItems", JSON.stringify(updatedCart));
+            return updatedCart;
+        });
+    }, []);
 
     const handleCartQtyDecrease = useCallback((product: CartProductType) => {
-        let updatedCart;
-
-        if (product.quantity === 1) {
-            return toast.error("Aby usunąć produkt, pod nazwą produktu kliknij zapis - Usuń.");
-        }
-        if (cartProducts) {
-            updatedCart = [...cartProducts]
-        }
-        const existingIndex = cartProducts?.findIndex((item) => item.id === product.id);
-
-        if (existingIndex > -1) {
-            updatedCart[existingIndex].quantity = --updatedCart[existingIndex].quantity
+        if (product.quantity <= 1) {
+            return toast.error("Minimalna ilość produktu to 1.");
         }
 
-        setCartProducts(updatedCart);
-        localStorage.setItem("eShopCartItems", JSON.stringify(updatedCart))
+        setCartProducts((prevProducts) => {
+            const updatedCart = prevProducts.map(item => {
+                if (item.id === product.id && item.selectedFlavour.flavour === product.selectedFlavour.flavour) {
+                    return { ...item, quantity: item.quantity - 1 };
+                }
+                return item;
+            });
 
-    }, [cartProducts]);
+            localStorage.setItem("eShopCartItems", JSON.stringify(updatedCart));
+            return updatedCart;
+        });
+    }, []);
 
     const handleClearCart = useCallback(() => {
         setCartProducts(null);

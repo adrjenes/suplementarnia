@@ -8,7 +8,8 @@ import ItemContent from "@/app/cart/ItemContent";
 import {formatPrice} from "@/utils/formatPrice";
 import {SafeUser} from "@/types";
 import {useRouter} from "next/navigation";
-import React from "react";
+import React, {useState} from "react";
+import {FaShoppingBasket} from "react-icons/fa";
 
 interface CartClientProps {
     currentUser: SafeUser | null;
@@ -16,7 +17,7 @@ interface CartClientProps {
 
 const CartClient: React.FC<CartClientProps> = ({currentUser}) => {
     const {cartProducts, handleClearCart, cartTotalAmount} = useCart();
-
+    const [color, setColor] = useState("");
     const router = useRouter();
 
     if (!cartProducts || cartProducts.length == 0) {
@@ -34,22 +35,29 @@ const CartClient: React.FC<CartClientProps> = ({currentUser}) => {
     }
 
     return <div>
-        <Heading title="Twój koszyk" center/>
-        <div className="grid grid-cols-5 text-xs gap-4 pb-6 items-center mt-8">
-            <div className="col-span-2 justify-self-start">PRODUKT</div>
-            <div className="justify-self-center">CENA</div>
-            <div className="justify-self-center">ILOŚĆ</div>
-            <div className="justify-self-end">CAŁOŚĆ</div>
+        <div className="flex text-center items-center pt-2 gap-3">
+            <p className={`text-4xl font-bold hover:text-green-700 ${color}`}
+               onMouseEnter={() => setColor("text-green-700")}
+               onMouseLeave={() => setColor("")}
+            >
+                TWÓJ KOSZYK
+            </p>
+            <FaShoppingBasket size={30} className={`${color}`} onMouseEnter={() => setColor("text-green-700")} onMouseLeave={() => setColor("")}/>
+            <div className="pl-4">
+                <button
+                    onClick={() => {handleClearCart()}}
+                    className="text-green-700 border-green-600 border-[2px] rounded-full p-0.5 px-2"
+                >Wyczyść koszyk</button>
+            </div>
         </div>
-        <div>
+
+        <div className="pt-6">
             {cartProducts && cartProducts.map((item) => {
                 return <ItemContent key={item.id} item={item}/>
             })}
         </div>
         <div className="border-t-[1.5px] border-slate-200 py-6 flex justify-between gap-4">
-            <div className="w-[150px]">
-                <Button label="Wyczyść koszyk" onClick={() => {handleClearCart()}} small outline />
-            </div>
+
             <div className="text-sm flex flex-col gap-5 items-start">
                 <div className="flex justify-between w-full text-base font-semibold">
                     <span>Suma całkowita</span>

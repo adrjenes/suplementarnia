@@ -22,7 +22,10 @@ import {useRouter} from "next/navigation";
 
 export type ImageType = { image: File | null; }
 export type UploadedImageType = { image: string; }
-export type FlavourType = { flavour: string; }
+export type FlavourType = {
+    flavour: string;
+    quantity: number;
+}
 
 const AddProductForm = () => {
     const router = useRouter();
@@ -55,7 +58,10 @@ const AddProductForm = () => {
 
 
     const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-        const formattedDetails = data.details.map(flavour => ({flavour}));
+        const formattedDetails = data.details.map(detail => ({
+            flavour: detail.flavour,
+            quantity: +detail.quantity
+        }));
         const formattedData = {
             ...data,
             details: formattedDetails
@@ -72,9 +78,9 @@ const AddProductForm = () => {
             setIsLoading(false);
             return toast.error("Brak zdjęcia!");
         }
-        if (!formattedData.details.every(detail => detail.flavour)) {
+        if (!formattedData.details.every(detail => detail.flavour && detail.quantity != null)) {
             setIsLoading(false);
-            return toast.error("Wypełnij pole o smaku!");
+            return toast.error("Wypełnij pole o smaku i ilości!");
         }
 
         const handleImageUploads = async () => {
@@ -213,16 +219,36 @@ const AddProductForm = () => {
 
 
                     <div className="flex items-center pt-10">
-                        <div className="mr-2">Wprowadź liczbę smaków do wyboru:</div>
+                        <div className="mr-2">Wprowadź liczbę smaków i ich ilości do wyboru:</div>
                         <input type="number" placeholder="0" onChange={handleChangeFlavour}
                                className="w-[70px] p-2 outline-none bg-white font-light border-2 rounded-md"/>
                     </div>
                     <div className="py-4 grid grid-cols-2 w-full gap-4">
-                        {Array.from({length: inputCount}, (_, index) => (
-                            <div key={index}>
-                                <Input key={index} id={`details` + [`[${index}]`]} label={`Smak nr. ${index + 1}`}
-                                       disabled={isLoading} register={register} errors={errors} required
-                                       placeholder={`Smak ${index + 1}`}
+                        {Array.from({ length: inputCount }, (_, index) => (
+                            <div key={index} className="flex gap-2">
+                                <Input
+                                    key={`flavour-${index}`}
+                                    id={`details[${index}].flavour`}
+                                    name={`details[${index}].flavour`}
+                                    label={`Smak nr. ${index + 1}`}
+                                    disabled={isLoading}
+                                    register={register}
+                                    errors={errors}
+                                    required
+                                    placeholder={`Smak ${index + 1}`}
+                                />
+                                <Input
+                                    key={`quantity-${index}`}
+                                    id={`details[${index}].quantity`}
+                                    name={`details[${index}].quantity`}
+                                    label={`Ilość dla smaku nr. ${index + 1}`}
+                                    disabled={isLoading}
+                                    register={register}
+                                    errors={errors}
+                                    required
+                                    type="number"
+                                    placeholder={`Ilość`}
+                                    className="text-center"
                                 />
                             </div>
                         ))}

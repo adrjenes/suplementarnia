@@ -73,6 +73,7 @@ export async function POST(request: Request) {
         await prisma.order.create({
             data: orderData,
         });
+
         return NextResponse.json({ paymentIntent });
     }
 }

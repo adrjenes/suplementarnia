@@ -30,8 +30,8 @@ export type SelectedImageType = {
 
 export type SelectedFlavourType = {
     flavour: string,
+    quantity: number | null,
 }
-
 const Horizontal = () => {
     return <hr className="w-[30% my-2]"/>
 }
@@ -51,7 +51,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({product}) => {
         price: product.price,
     });
     const router = useRouter();
-
     useEffect(() => {
         setIsProductInCart(false)
         if (cartProducts) {
@@ -68,15 +67,16 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({product}) => {
     const handleFlavourSelect = useCallback(
         (value: SelectedFlavourType) => {
             setCartProduct((prev) => {
-                return {...prev, selectedFlavour: value};
+                const availableQuantity = product.details.find(detail => detail.flavour === value.flavour)?.quantity || 0;
+                return {
+                    ...prev,
+                    selectedFlavour: value,
+                    quantity: 1,
+                };
             });
-        }, [cartProduct.selectedFlavour]);
+        }, [product.details, cartProduct.selectedFlavour]);
 
     const handleQtyIncrease = useCallback(() => {
-
-        if (cartProduct.quantity === 99) {
-            return;
-        }
 
         setCartProduct((prev) => {
             return {...prev, quantity: prev.quantity + 1};
@@ -117,20 +117,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({product}) => {
                     {product.inStock ? 'W magazynie' : 'Brak na stanie'}
                 </div>
                 <Horizontal/>
-                {isProductInCart ? (
-                        <>
-                        <p className="mb-2 text-slate-500 flex items-center gap-1 pt-6">
-                            <MdCheckCircle className="text-teal-400" size={25}/>
-                            <span className="text-xl pl-1">Produkt został dodany do koszyka</span>
-                        </p>
-                        <div className="max-w-[300px] pt-4">
-                            <Button label="Wyświetl koszyk" outline onClick={() => {
-                                router.push('/cart');
-                            }}/>
-                        </div>
-                        </>
-                ) : (
-                        <>
+
                             <SetFlavour cartProduct={cartProduct} details={product.details}
                                         handleFlavourSelect={handleFlavourSelect}/>
                             <Horizontal/>
@@ -140,10 +127,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({product}) => {
                             <div className="max-w-[300px] pt-6">
                                 <Button label="Dodaj do koszyka" onClick={() => handleAddProductToCart(cartProduct)}/>
                             </div>
-                    </>
-                )
-                }
-
             </div>
         </div>
     )

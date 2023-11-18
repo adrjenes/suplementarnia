@@ -4,8 +4,10 @@ import {formatPrice} from "@/utils/formatPrice";
 import Link from "next/link";
 import {truncateText} from "@/utils/truncateText";
 import Image from "next/image";
-import SetQuatity from "@/app/components/products/SetQuantity";
+import SetQuantity from "@/app/components/products/SetQuantity";
 import {useCart} from "@/hooks/useCart";
+import {FaRegTrashCan} from "react-icons/fa6";
+
 
 interface ItemContentProps {
     item: CartProductType;
@@ -13,7 +15,9 @@ interface ItemContentProps {
 
 const ItemContent: React.FC<ItemContentProps> = ({item}) => {
     const {handleRemoveProductFromCart, handleCartQtyIncrease, handleCartQtyDecrease} = useCart();
-    return <div className="grid grid-cols-5 text-xs md:text-sm gap-4 border-t-[1.5px] border-green-200 py-4 items-center">
+
+    return <div>
+    <div className="grid grid-cols-6 text-xs md:text-sm gap-4 py-4 items-center">
         <div className="col-span-2 justify-self-start flex gap-2 md:gap-4">
             <Link href={`/product/${item.id}`}>
                 <div className="relative w-[70px] aspect-square">
@@ -22,30 +26,38 @@ const ItemContent: React.FC<ItemContentProps> = ({item}) => {
             </Link>
             <div className="flex flex-col justify-between">
                 <Link href={`/product/${item.id}`}>
-                    {truncateText(item.name)}
+                    <p className="text-xs uppercase text-gray-500">{item.brand}</p>
+                    <p className="pt-1 text-lg">{truncateText(item.name)}</p>
                 </Link>
-                <div>{item.selectedFlavour.flavour}</div>
-                <div className="w-[70px]">
-                    <button className="text-red-500 underline" onClick={() => handleRemoveProductFromCart(item)}>
-                        Usuń
-                    </button>
-                </div>
+                <div className="pt-0.5 text-xs">Smak: {item.selectedFlavour.flavour}</div>
+
             </div>
         </div>
         <div className="justify-self-center">
             {formatPrice(item.price)}
         </div>
         <div className="justify-self-center">
-            <SetQuatity
+            <SetQuantity
                 cartCounter={true}
                 cartProduct={item}
-                handleQtyIncrease={() => {handleCartQtyIncrease(item)}}
-                handleQtyDecrease={() => {handleCartQtyDecrease(item)}}
+                handleQtyIncrease={() => handleCartQtyIncrease(item)}
+                handleQtyDecrease={() => handleCartQtyDecrease(item)}
+                maxQuantity={item.selectedFlavour.quantity} // Przekazanie maxQuantity
             />
         </div>
-        <div className="justify-self-end font-semibold">
+        <div className="justify-self-center font-semibold">
             {formatPrice(item.price * item.quantity)}
         </div>
+        <div className="justify-self-center underline">
+            <button onClick={() => {
+
+                handleRemoveProductFromCart(item)
+            }}>
+                <FaRegTrashCan size={25} className="text-red-500"/>
+            </button>
+        </div>
+    </div>
+
     </div>
 }
 export default ItemContent

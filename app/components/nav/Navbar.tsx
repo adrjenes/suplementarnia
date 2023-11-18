@@ -11,7 +11,7 @@ import SearchBar from "@/app/components/nav/SearchBar";
 const Navbar = async () => {
     const currentUser = await getCurrentUser();
     return (
-        <div className="top-0 w-full bg-white z-30 shadow-sm">
+        <div className="top-0 w-full bg-white z-30 shadow-md">
             <div className="py-2 border-b-[1px] border-green-400">
                 <Container>
                     <div className="flex items-center justify-between gap-3 md:gap-0 h-[72px]">
