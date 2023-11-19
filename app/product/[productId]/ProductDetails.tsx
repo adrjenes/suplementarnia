@@ -76,23 +76,9 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({product}) => {
             });
         }, [product.details, cartProduct.selectedFlavour]);
 
-    const handleQtyIncrease = useCallback(() => {
 
-        setCartProduct((prev) => {
-            return {...prev, quantity: prev.quantity + 1};
-        });
-    }, [cartProduct])
 
-    const handleQtyDecrease = useCallback(() => {
 
-        if (cartProduct.quantity === 1) {
-            return;
-        }
-
-        setCartProduct((prev) => {
-            return {...prev, quantity: prev.quantity - 1};
-        })
-    }, [cartProduct])
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
@@ -120,9 +106,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({product}) => {
 
                             <SetFlavour cartProduct={cartProduct} details={product.details}
                                         handleFlavourSelect={handleFlavourSelect}/>
-                            <Horizontal/>
-                            <SetQuatity cartProduct={cartProduct} handleQtyIncrease={handleQtyIncrease}
-                                    handleQtyDecrease={handleQtyDecrease}/>
                             <Horizontal/>
                             <div className="max-w-[300px] pt-6">
                                 <Button label="Dodaj do koszyka" onClick={() => handleAddProductToCart(cartProduct)}/>

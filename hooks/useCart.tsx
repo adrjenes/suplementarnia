@@ -92,10 +92,9 @@ export const CartContextProvider = (props: Props) => {
     }, [cartProducts]);
 
     const handleCartQtyIncrease = useCallback((product: CartProductType) => {
-        if (product.quantity >= product.maxQuantity) {
+        if (product.quantity >= product.selectedFlavour.quantity) {
             return toast.error("Osiągnięto maksymalną ilość tego produktu.");
         }
-
         setCartProducts((prevProducts) => {
             const updatedCart = prevProducts.map(item => {
                 if (item.id === product.id && item.selectedFlavour.flavour === product.selectedFlavour.flavour) {

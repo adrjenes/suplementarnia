@@ -33,7 +33,7 @@ const CartClient: React.FC<CartClientProps> = ({currentUser}) => {
             </div>
         )
     }
-
+    console.log(cartProducts)
     return <div>
         <div className="flex text-center items-center pt-2 gap-3">
             <p className={`text-4xl font-bold hover:text-green-700 ${color}`}

@@ -29,12 +29,18 @@ const CheckoutClient = () => {
             const mergedProducts = {};
 
             cartProducts.forEach(product => {
-                if (!mergedProducts[product.id]) {
-                    // Tworzymy nowy produkt z pustą listą smaków
-                    mergedProducts[product.id] = { ...product, selectedFlavour: [{ ...product.selectedFlavour }] };
+                const updatedProduct = {
+                    ...product,
+                    selectedFlavour: {
+                        ...product.selectedFlavour,
+                        quantity: product.quantity  // Synchronizacja z quantity produktu
+                    }
+                };
+                console.log("updatedProduct", updatedProduct);
+                if (!mergedProducts[updatedProduct.id]) {
+                    mergedProducts[updatedProduct.id] = { ...updatedProduct, selectedFlavour: [{ ...updatedProduct.selectedFlavour }] };
                 } else {
-                    // Dodajemy nowy smak do istniejącej listy
-                    mergedProducts[product.id].selectedFlavour.push({ ...product.selectedFlavour });
+                    mergedProducts[updatedProduct.id].selectedFlavour.push({ ...updatedProduct.selectedFlavour });
                 }
             });
 
