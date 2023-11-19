@@ -33,7 +33,7 @@ const CheckoutClient = () => {
                     ...product,
                     selectedFlavour: {
                         ...product.selectedFlavour,
-                        quantity: product.quantity  // Synchronizacja z quantity produktu
+                        quantity: product.quantity
                     }
                 };
                 console.log("updatedProduct", updatedProduct);
