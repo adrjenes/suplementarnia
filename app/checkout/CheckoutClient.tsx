@@ -17,6 +17,7 @@ const CheckoutClient = () => {
     const [error, setError] = useState(false);
     const [clientSecret, setClientSecret] = useState('');
     const [paymentSuccess, setPaymentSuccess] = useState(false);
+    const [finalProducts, setFinalProducts] = useState([]);
 
     const router = useRouter();
 
@@ -42,6 +43,7 @@ const CheckoutClient = () => {
                 } else {
                     mergedProducts[updatedProduct.id].selectedFlavour.push({ ...updatedProduct.selectedFlavour });
                 }
+
             });
 
             const finalCartProducts = Object.values(mergedProducts);
@@ -63,6 +65,7 @@ const CheckoutClient = () => {
                 }
                 return res.json();
             }).then((data) => {
+                setFinalProducts(finalCartProducts);
                 setClientSecret(data.paymentIntent.client_secret)
                 handleSetPaymentIntent(data.paymentIntent.id)
             }).catch((error) => {
@@ -85,30 +88,27 @@ const CheckoutClient = () => {
         setPaymentSuccess(value);
     }, []);
 
+
     useEffect(() => {
-        if (paymentSuccess) {
-            localStorage.removeItem("eShopPaymentIntent");
-        }
-    }, [paymentSuccess]);
-    useEffect(() => {
-        if (paymentSuccess && cartProducts) {
-            // Funkcja do wysyłania żądania aktualizacji ilości produktów
+        if (paymentSuccess && finalProducts.length > 0) {
             const updateProductQuantities = async () => {
                 try {
                     await fetch('/api/update-product-quantities', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({products: cartProducts})
+                        body: JSON.stringify({products: finalProducts}) // Użyj finalProducts
                     });
-                    // Dodatkowe akcje po pomyślnej aktualizacji, np. powiadomienia
+                    // Dodatkowe akcje po pomyślnej aktualizacji
                 } catch (error) {
                     console.error('Błąd podczas aktualizacji ilości produktów', error);
+                } finally {
+                    localStorage.removeItem("eShopPaymentIntent");
                 }
             };
 
             updateProductQuantities();
         }
-    }, [paymentSuccess, cartProducts]);
+    }, [paymentSuccess, finalProducts]);
     return <div className="w-full">
         {clientSecret && cartProducts && (
             <Elements options={options} stripe={stripePromise}>
