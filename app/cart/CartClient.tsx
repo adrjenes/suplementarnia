@@ -11,14 +11,16 @@ import {useRouter} from "next/navigation";
 import React, {useState} from "react";
 import {FaShoppingBasket} from "react-icons/fa";
 
+
 interface CartClientProps {
     currentUser: SafeUser | null;
 }
 
 const CartClient: React.FC<CartClientProps> = ({currentUser}) => {
-    const {cartProducts, handleClearCart, cartTotalAmount} = useCart();
+    const {cartProducts, handleClearCart, cartTotalAmount, handleSetPaymentIntent} = useCart();
     const [color, setColor] = useState("");
     const router = useRouter();
+    const [loading, setLoading] = useState(false); 
 
     if (!cartProducts || cartProducts.length == 0) {
         return (
@@ -32,6 +34,49 @@ const CartClient: React.FC<CartClientProps> = ({currentUser}) => {
                 </div>
             </div>
         )
+    }
+    const handlePaymentStep =async () => {
+        console.log("hello motherfucker");
+        setLoading(true); 
+        console.log(cartTotalAmount); 
+        const paymentIntentBody = {
+            items: [], 
+            totalAmount: formatPrice(cartTotalAmount),
+            payment_intent_id: null
+        }
+        await fetch('/api/create-payment-intent', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(paymentIntentBody)
+            
+        }).then((res) => {
+            console.log(res);
+            if (res.status === 401) {
+                return router.push('/login');
+            } else if(
+                res.status === 400 
+            ) {
+                console.error("eerror creating payment intent"); 
+                return router.push('/cart'); 
+            }
+            return res.json();
+        }).then((data) => {
+            if(data.paymentIntent) {
+                handleSetPaymentIntent(data.paymentIntent); 
+                setLoading(false); 
+                router.push('/checkout');
+            } 
+        }).catch((error) => {
+            
+            
+            console.error("Something went wrong");
+        })
+
+
+
+        
+
+
     }
     console.log(cartProducts)
     return <div>
@@ -52,8 +97,8 @@ const CartClient: React.FC<CartClientProps> = ({currentUser}) => {
         </div>
 
         <div className="pt-6">
-            {cartProducts && cartProducts.map((item) => {
-                return <ItemContent key={item.id} item={item}/>
+            {cartProducts && cartProducts.map((item, idx) => {
+                return <ItemContent key={idx} item={item}/>
             })}
         </div>
         <div className="border-t-[1.5px] border-slate-200 py-6 flex justify-between gap-4">
@@ -67,7 +112,8 @@ const CartClient: React.FC<CartClientProps> = ({currentUser}) => {
                 <Button
                     label={currentUser ? 'Przejdź do płatności' : 'Zaloguj się, aby przejść do płatności'}
                     outline = {currentUser ? false : true}
-                    onClick={() => {currentUser ? router.push('/checkout') : router.push('/login')}}
+                    onClick={handlePaymentStep}
+
                 />
                 <Link href={"/"} className="text-green-700 flex items-center gap-1">
                     <MdArrowBack/>

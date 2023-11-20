@@ -23,26 +23,19 @@ export async function POST(request: Request) {
         return NextResponse.json({error: 'Niezautoryzowano'}, {status: 401})
     }
     const body = await request.json();
-    const {items, payment_intent_id} = body;
-    const total = calculateOrderAmount(items) * 100;
-    const orderData = {
-        user: {connect: {id: currentUser.id}},
-        amount: total,
-        currency: 'usd',
-        status: "pending",
-        deliveryStatus: "pending",
-        paymentIntentId: payment_intent_id,
-        products: items
-    }
-    if (payment_intent_id) {
+    const {items, totalAmount,  payment_intent_id}: {totalAmount: string, items: [], payment_intent_id: string | null} = body;
+    
+    
+    
+    //we assume that the payment_intent_id is null if the user is creating a new order
+    
+    if (payment_intent_id !== null) {
+        const total = parseFloat(totalAmount) * 100; 
+       
         const current_intent = await stripe.paymentIntents.retrieve(payment_intent_id)
         if (current_intent) {
-            const updated_intent = await stripe.paymentIntents.update(
-                payment_intent_id,
-                {amount: total}
-            )
 
-        const [existing_order, update_order] = await Promise.all([
+        const [existing_order, updated_order] = await Promise.all([
             prisma.order.findFirst({
                 where: {paymentIntentId: payment_intent_id},
             }),
@@ -53,27 +46,46 @@ export async function POST(request: Request) {
                     products: items,
                 }
             })
+            
         ]);
-        if (!existing_order) {
-            return NextResponse.json(
-                {error: "Zamówienie już istnieje"},
-                {status: 400}
-            );
-        }
-        return NextResponse.json({paymentIntent: updated_intent})
+        //  //confirm stripe payment 
+        //  const updated_intent = await stripe.paymentIntents.confirm(
+        //     payment_intent_id,
+        // ); 
+       
+        return NextResponse.json({ updated_order})
     }
     } else {
-        const paymentIntent = await stripe.paymentIntents.create({
-            amount: total,
+        const paymentIntent =  stripe.paymentIntents.create({
+            amount: parseFloat(totalAmount) * 100,
             currency: "usd",
-            automatic_payment_methods: {enabled: true},
+            payment_method_types: ["card"],
         });
-        // create the order
-        orderData.paymentIntentId = paymentIntent.id;
-        await prisma.order.create({
-            data: orderData,
-        });
+      
+        return await paymentIntent.then(async (result) => {
+            // create the order
+        const orderData = {
+            user: {connect: {id: currentUser.id}},
+            amount: parseFloat(totalAmount) * 100,
+            currency: 'usd',
+            status: "pending",
+            deliveryStatus: "pending",
+            paymentIntentId: result.id,
+            products: items
+        }
+        
+            const order = await prisma.order.create({
+                data: orderData,
+            });
 
-        return NextResponse.json({ paymentIntent });
+            return NextResponse.json({ order, paymentIntent: result  });
+        }).catch((err) => {
+            console.log(err)
+            return NextResponse.json({error: err.message}, {status: 400})
+        }); 
+
+        
+
+        
     }
 }
