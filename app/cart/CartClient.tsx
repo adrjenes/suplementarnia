@@ -20,7 +20,7 @@ const CartClient: React.FC<CartClientProps> = ({currentUser}) => {
     const {cartProducts, handleClearCart, cartTotalAmount, handleSetPaymentIntent} = useCart();
     const [color, setColor] = useState("");
     const router = useRouter();
-    const [loading, setLoading] = useState(false); 
+    const [loadingPaymentStep, setLoadingPaymentStep] = useState(false); 
 
     if (!cartProducts || cartProducts.length == 0) {
         return (
@@ -37,7 +37,7 @@ const CartClient: React.FC<CartClientProps> = ({currentUser}) => {
     }
     const handlePaymentStep =async () => {
         console.log("hello motherfucker");
-        setLoading(true); 
+        setLoadingPaymentStep(true); 
         console.log(cartTotalAmount); 
         const paymentIntentBody = {
             items: [], 
@@ -63,7 +63,7 @@ const CartClient: React.FC<CartClientProps> = ({currentUser}) => {
         }).then((data) => {
             if(data.paymentIntent) {
                 handleSetPaymentIntent(data.paymentIntent); 
-                setLoading(false); 
+                setLoadingPaymentStep(false); 
                 router.push('/checkout');
             } 
         }).catch((error) => {
@@ -110,7 +110,7 @@ const CartClient: React.FC<CartClientProps> = ({currentUser}) => {
                 </div>
                 <p className="text-slate-500">VAT i przesyłka obliczane przy podsumowaniu koszyka</p>
                 <Button
-                    label={currentUser ? 'Przejdź do płatności' : 'Zaloguj się, aby przejść do płatności'}
+                    label={currentUser ? loadingPaymentStep ? "Ładowanie formularza płatności" : 'Przejdź do płatności'   : 'Zaloguj się, aby przejść do płatności'}
                     outline = {currentUser ? false : true}
                     onClick={handlePaymentStep}
 
