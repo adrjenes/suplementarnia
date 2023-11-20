@@ -70,43 +70,48 @@ const CheckoutClient = () => {
         }
     }
 
-    const handleSetPaymentSuccess = async () => {
-        try {
-            await fetch('/api/create-payment-intent', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({items: finalProducts, payment_intent_id: paymentIntent.id, totalAmount: formatPrice(cartTotalAmount)}) // Użyj finalProducts
-            }).then((res) => {
-                //handle error
-                return res.json(); 
-            }).then((data) => {
-                
-                if(data.updated_order){
-                    setPaymentSuccess(true);
-                }
-               
-            });
-            // Dodatkowe akcje po pomyślnej aktualizacji
-        } catch (error) {
-            console.error('Błąd podczas aktualizacji ilości produktów', error);
-        } finally {
-            localStorage.removeItem("eShopPaymentIntent");
+    const handleSetPaymentSuccess = async (success: boolean) => {
+
+        if(success) {
+            try {
+                await fetch('/api/create-payment-intent', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({items: finalProducts, payment_intent_id: paymentIntent.id, totalAmount: formatPrice(cartTotalAmount)}) // Użyj finalProducts
+                }).then((res) => {
+                    //handle error
+                    return res.json(); 
+                }).then((data) => {
+                    
+                    if(data.updated_order){
+                        setPaymentSuccess(true);
+                    }
+                   
+                });
+                // Dodatkowe akcje po pomyślnej aktualizacji
+            } catch (error) {
+                console.error('Błąd podczas aktualizacji ilości produktów', error);
+            } finally {
+                localStorage.removeItem("eShopPaymentIntent");
+            }
         }
 
-
     }; 
+    const handleSetOrderProcessing = (processing: boolean) => {
+        setLoading(processing); 
+    }
 
     console.log(paymentSuccess); 
     return <div className="w-full">
         {(clientSecret && finalProducts !== undefined)&& (
            
             <Elements options={options} stripe={stripePromise} >
-                <CheckoutForm clientSecret={paymentIntent.client_secret} handleSetPaymentSuccess={handleSetPaymentSuccess}/>
+                <CheckoutForm clientSecret={paymentIntent.client_secret} handleSetOrderProcessing={handleSetOrderProcessing} handleSetPaymentSuccess={handleSetPaymentSuccess}/>
             </Elements>
            
            
         )}
-        {loading && <div className="text-center">Ładowanie zakupu...</div>}
+        
         {error && (
             <div className="text-center text-rose-500">Something went wrong...</div>
             )}
@@ -120,7 +125,7 @@ const CheckoutClient = () => {
                     />
                 </div>
             </div>
-        ): <></>}
+        ): loading && <div className="text-center">Ładowanie zakupu...</div>}
     </div>;
 }
 export default CheckoutClient;
