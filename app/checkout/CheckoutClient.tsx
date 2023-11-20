@@ -25,6 +25,7 @@ const CheckoutClient = () => {
     console.log("clientSecret ", clientSecret);
 
     useEffect(() => {
+
         if (cartProducts) {
             const mergedProducts = {};
 
@@ -44,36 +45,35 @@ const CheckoutClient = () => {
                 }
 
             });
+
             const finalCartProducts = Object.values(mergedProducts);
             console.log("final", finalCartProducts)
             console.log("cart", cartProducts)
             setLoading(true)
             setError(false)
-
-                fetch('/api/create-payment-intent', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        items: finalCartProducts,
-                        payment_intent_id: paymentIntent
-                    })
-                }).then((res) => {
-                    setLoading(false);
-                    if (res.status === 401) {
-                        return router.push('/login');
-                    }
-                    return res.json();
-                }).then((data) => {
-                    setFinalProducts(finalCartProducts);
-                    setClientSecret(data.paymentIntent.client_secret)
-                    handleSetPaymentIntent(data.paymentIntent.id)
-                }).catch((error) => {
-                    setError(true);
-                    console.log("Error, error");
-                    toast.error("Something went wrong");
+            fetch('/api/create-payment-intent', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    items: finalCartProducts,
+                    payment_intent_id: paymentIntent
                 })
-            }
-
+            }).then((res) => {
+                setLoading(false);
+                if (res.status === 401) {
+                    return router.push('/login');
+                }
+                return res.json();
+            }).then((data) => {
+                setFinalProducts(finalCartProducts);
+                setClientSecret(data.paymentIntent.client_secret)
+                handleSetPaymentIntent(data.paymentIntent.id)
+            }).catch((error) => {
+                setError(true);
+                console.log("Error, error");
+                toast.error("Something went wrong");
+            })
+        }
     }, [cartProducts, paymentIntent]);
 
     const options: StripeElementsOptions = {
@@ -112,10 +112,7 @@ const CheckoutClient = () => {
     return <div className="w-full">
         {clientSecret && cartProducts && (
             <Elements options={options} stripe={stripePromise}>
-                <CheckoutForm
-                    clientSecret={clientSecret}
-                    handleSetPaymentSuccess={handleSetPaymentSuccess}
-                />
+                <CheckoutForm clientSecret={clientSecret} handleSetPaymentSuccess={handleSetPaymentSuccess}/>
             </Elements>
         )}
         {loading && <div className="text-center">Ładowanie zakupu...</div>}

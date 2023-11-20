@@ -11,24 +11,18 @@ export async function POST(request: Request) {
         });
 
         if (dbProduct && dbProduct.details) {
-            let allQuantitiesZero = true; // Zakładamy, że wszystkie ilości są na początku 0
-
             const updatedDetails = dbProduct.details.map(detail => {
                 const purchasedFlavour = product.selectedFlavour.find(flavour => flavour.flavour === detail.flavour);
                 if (purchasedFlavour) {
-                    const newQuantity = Math.max(0, detail.quantity - purchasedFlavour.quantity);
-                    if (newQuantity > 0) allQuantitiesZero = false; // Jeśli jakakolwiek ilość jest większa od 0, aktualizujemy flagę
-                    return { ...detail, quantity: newQuantity };
+                    // Odejmowanie zakupionej ilości od dostępnej ilości
+                    return { ...detail, quantity: Math.max(0, detail.quantity - purchasedFlavour.quantity) };
                 }
                 return detail;
             });
 
             await prisma.product.update({
                 where: { id: product.id },
-                data: {
-                    details: updatedDetails,
-                    inStock: !allQuantitiesZero // Ustawienie inStock na false, jeśli wszystkie ilości to 0
-                },
+                data: { details: updatedDetails },
             });
         }
     }

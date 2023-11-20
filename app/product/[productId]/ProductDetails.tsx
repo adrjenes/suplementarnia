@@ -61,6 +61,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({product}) => {
             }
         }
     }, [cartProducts])
+
     const productRating = product.reviews.reduce((acc: number, item: any) => item.rating + acc, 0) / product.reviews.length;
 
     const handleFlavourSelect = useCallback(
