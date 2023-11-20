@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     
     //we assume that the payment_intent_id is null if the user is creating a new order
     
-    if (payment_intent_id !== null) {
+    if (payment_intent_id !== null && items !== null) {
         const total = parseFloat(totalAmount) * 100; 
        
         const current_intent = await stripe.paymentIntents.retrieve(payment_intent_id)
@@ -48,6 +48,30 @@ export async function POST(request: Request) {
             })
             
         ]);
+
+        //update product quantities
+        for (const product of items) {
+            const dbProduct = await prisma.product.findUnique({
+                where: { id: product.id },
+            });
+    
+            if (dbProduct && dbProduct.details) {
+                const updatedDetails = dbProduct.details.map((detail: {flavour: string, quantity: number}) => {
+
+                    const purchasedFlavour = product.selectedFlavour.find(flavour => flavour.flavour === detail.flavour);
+                    if (purchasedFlavour) {
+                        // Odejmowanie zakupionej ilości od dostępnej ilości
+                        return { ...detail, quantity: Math.max(0, detail.quantity - purchasedFlavour.quantity) };
+                    }
+                    return detail;
+                });
+    
+                await prisma.product.update({
+                    where: { id: product.id },
+                    data: { details: updatedDetails },
+                });
+            }
+        }
         //  //confirm stripe payment 
         //  const updated_intent = await stripe.paymentIntents.confirm(
         //     payment_intent_id,

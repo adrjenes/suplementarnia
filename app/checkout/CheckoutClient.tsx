@@ -24,7 +24,12 @@ const CheckoutClient = () => {
     
 
     const router = useRouter();
-    
+    useEffect(() => {
+        if(paymentIntent !== null) {
+            setClientSecret(paymentIntent.client_secret);
+            console.log(paymentIntent);
+        }
+    }, [paymentIntent]);
 
     const mergeProducts = useCallback(() => {
         
@@ -55,7 +60,6 @@ const CheckoutClient = () => {
     }, [cartProducts]);
 
     const finalProducts = mergeProducts(); 
-    
      
 
     const options: StripeElementsOptions = {
@@ -66,7 +70,7 @@ const CheckoutClient = () => {
         }
     }
 
-    const handleSetPaymentSuccess = useCallback(async (value: boolean) => {
+    const handleSetPaymentSuccess = async () => {
         try {
             await fetch('/api/create-payment-intent', {
                 method: 'POST',
@@ -76,8 +80,10 @@ const CheckoutClient = () => {
                 //handle error
                 return res.json(); 
             }).then((data) => {
-                console.log(data);
-                setPaymentSuccess(true);
+                
+                if(data.updated_order){
+                    setPaymentSuccess(true);
+                }
                
             });
             // Dodatkowe akcje po pomyślnej aktualizacji
@@ -88,38 +94,9 @@ const CheckoutClient = () => {
         }
 
 
-    }, []);
+    }; 
 
-
-    useEffect(() => {
-        if (paymentSuccess && finalProducts!== undefined) {
-            const updateProductQuantities = async () => {
-                try {
-                    await fetch('/api/update-product-quantities', {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({products: finalProducts}) // Użyj finalProducts
-                    });
-                    // Dodatkowe akcje po pomyślnej aktualizacji
-                } catch (error) {
-                    console.error('Błąd podczas aktualizacji ilości produktów', error);
-                } finally {
-                    localStorage.removeItem("eShopPaymentIntent");
-                }
-            };
-
-            //updateProductQuantities();
-        }
-    }, [paymentSuccess, finalProducts]);
-    useEffect(() => {
-        if(paymentIntent !== null) {
-            setClientSecret(paymentIntent.client_secret);
-            console.log(paymentIntent);
-        }
-    }, [paymentIntent]);
-
-    
-
+    console.log(paymentSuccess); 
     return <div className="w-full">
         {(clientSecret && finalProducts !== undefined)&& (
            
@@ -133,7 +110,7 @@ const CheckoutClient = () => {
         {error && (
             <div className="text-center text-rose-500">Something went wrong...</div>
             )}
-        {paymentSuccess && (
+        {paymentSuccess === true ? (
             <div className="flex items-center flex-col gap-4">
                 <div className="text-teal-500 text-center">Transakcja zakończona sukcesem</div>
                 <div className="max-w-[220px] w-full">
@@ -143,7 +120,7 @@ const CheckoutClient = () => {
                     />
                 </div>
             </div>
-        )}
+        ): <></>}
     </div>;
 }
 export default CheckoutClient;
