@@ -12,7 +12,7 @@ type CartContextType = {
     handleCartQtyIncrease: (product: CartProductType) => void;
     handleCartQtyDecrease: (product: CartProductType) => void;
     handleClearCart: () => void;
-    paymentIntent: any;
+    paymentIntent: string | null;
     handleSetPaymentIntent: (val: string | null) => void;
 }
 export const CartContext = createContext<CartContextType | null>(null);
