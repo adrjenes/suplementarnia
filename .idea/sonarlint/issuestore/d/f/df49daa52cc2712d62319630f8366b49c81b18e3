@@ -1,0 +1,5 @@
+
+>typescript:S1874"'Props' is deprecated.(Œ¾×àüÿÿÿÿ8üĞµ›¿1
+•typescript:S6523*"mUnsafe usage of optional chaining. If it short-circuits with 'undefined' the evaluation will throw TypeError.(÷¬ÂÅùÿÿÿÿ8‹Ñµ›¿1
+typescript:S6606="jPrefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.(¬¢š8šÑµ›¿1
+²typescript:S6481Œ"The 'value' object passed as the value prop to the Context provider changes every render. To fix this consider wrapping it in a useMemo hook.(ş®€ˆ8œÑµ›¿1

@@ -1,0 +1,7 @@
+
+Atypescript:S1128"%Remove this unused import of 'toast'.(²È
+Dtypescript:S1128"#Remove this unused import of 'set'.(áäÖÙıÿÿÿÿ
+etypescript:S1854"DRemove this useless assignment to variable "handleSetPaymentIntent".(ÔÁâ¡şÿÿÿÿ
+Rtypescript:S1854"6Remove this useless assignment to variable "setError".(˜‚Ï¹
+stypescript:S4325*"RThis assertion is unnecessary since it does not change the type of the expression.(ÅôÖÏÿÿÿÿÿ
+7typescript:S36262"Remove this redundant jump.(ûÁİ…
