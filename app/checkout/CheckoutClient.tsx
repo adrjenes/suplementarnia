@@ -8,73 +8,59 @@ import {loadStripe, StripeElementsOptions} from "@stripe/stripe-js";
 import {Elements} from "@stripe/react-stripe-js";
 import CheckoutForm from "@/app/checkout/CheckoutForm";
 import Button from "@/app/components/Button";
+import { CartProductType } from "@prisma/client";
+import { formatPrice } from "@/utils/formatPrice";
+import { set } from "react-hook-form";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string);
+type MergedProduct = Omit<CartProductType, 'selectedFlavour'> & {selectedFlavour: Array<{flavour: string, quantity: number}>}
 
 const CheckoutClient = () => {
-    const {cartProducts, paymentIntent, handleSetPaymentIntent } = useCart();
+    const {cartProducts, paymentIntent, handleSetPaymentIntent, cartTotalAmount } = useCart();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
     const [clientSecret, setClientSecret] = useState('');
     const [paymentSuccess, setPaymentSuccess] = useState(false);
-    const [finalProducts, setFinalProducts] = useState([]);
+    
 
     const router = useRouter();
-
-    console.log("paymentIntent ", paymentIntent);
-    console.log("clientSecret ", clientSecret);
-
     useEffect(() => {
-
-        if (cartProducts) {
-            const mergedProducts = {};
-
-            cartProducts.forEach(product => {
-                const updatedProduct = {
-                    ...product,
-                    selectedFlavour: {
-                        ...product.selectedFlavour,
-                        quantity: product.quantity
-                    }
-                };
-                console.log("updatedProduct", updatedProduct);
-                if (!mergedProducts[updatedProduct.id]) {
-                    mergedProducts[updatedProduct.id] = { ...updatedProduct, selectedFlavour: [{ ...updatedProduct.selectedFlavour }] };
-                } else {
-                    mergedProducts[updatedProduct.id].selectedFlavour.push({ ...updatedProduct.selectedFlavour });
-                }
-
-            });
-
-            const finalCartProducts = Object.values(mergedProducts);
-            console.log("final", finalCartProducts)
-            console.log("cart", cartProducts)
-            setLoading(true)
-            setError(false)
-            fetch('/api/create-payment-intent', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    items: finalCartProducts,
-                    payment_intent_id: paymentIntent
-                })
-            }).then((res) => {
-                setLoading(false);
-                if (res.status === 401) {
-                    return router.push('/login');
-                }
-                return res.json();
-            }).then((data) => {
-                setFinalProducts(finalCartProducts);
-                setClientSecret(data.paymentIntent.client_secret)
-                handleSetPaymentIntent(data.paymentIntent.id)
-            }).catch((error) => {
-                setError(true);
-                console.log("Error, error");
-                toast.error("Something went wrong");
-            })
+        if(paymentIntent !== null) {
+            setClientSecret(paymentIntent.client_secret);
+            console.log(paymentIntent);
         }
-    }, [cartProducts, paymentIntent]);
+    }, [paymentIntent]);
+
+    const mergeProducts = useCallback(() => {
+        
+        if (cartProducts !== undefined && cartProducts != null && cartProducts.length > 0) {
+            const mergedProducts: MergedProduct[] = [];
+
+            cartProducts.forEach((product) => {
+                //add or update updatedproduct
+                const existingIndex = mergedProducts.findIndex((item) => item.id === product.id);
+                const flavour = {flavour: product.selectedFlavour.flavour as string , quantity: product.quantity}; 
+                const updatedProduct: MergedProduct = {
+                    ...product,
+                    selectedFlavour: [flavour]
+                    
+                };
+                if(existingIndex !== -1){
+                    mergedProducts[existingIndex].selectedFlavour.push(flavour);
+                    return;
+                } else {
+
+                    mergedProducts.push(updatedProduct);
+                }
+            });
+            return mergedProducts; 
+          
+           
+        }
+    }, [cartProducts]);
+
+    const finalProducts = mergeProducts(); 
+     
 
     const options: StripeElementsOptions = {
         clientSecret,
@@ -84,42 +70,52 @@ const CheckoutClient = () => {
         }
     }
 
-    const handleSetPaymentSuccess = useCallback((value: boolean) => {
-        setPaymentSuccess(value);
-    }, []);
+    const handleSetPaymentSuccess = async (success: boolean) => {
 
-
-    useEffect(() => {
-        if (paymentSuccess && finalProducts.length > 0) {
-            const updateProductQuantities = async () => {
-                try {
-                    await fetch('/api/update-product-quantities', {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({products: finalProducts}) // Użyj finalProducts
-                    });
-                    // Dodatkowe akcje po pomyślnej aktualizacji
-                } catch (error) {
-                    console.error('Błąd podczas aktualizacji ilości produktów', error);
-                } finally {
-                    localStorage.removeItem("eShopPaymentIntent");
-                }
-            };
-
-            updateProductQuantities();
+        if(success) {
+            try {
+                await fetch('/api/create-payment-intent', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({items: finalProducts, payment_intent_id: paymentIntent.id, totalAmount: formatPrice(cartTotalAmount)}) // Użyj finalProducts
+                }).then((res) => {
+                    //handle error
+                    return res.json(); 
+                }).then((data) => {
+                    
+                    if(data.updated_order){
+                        setPaymentSuccess(true);
+                    }
+                   
+                });
+                // Dodatkowe akcje po pomyślnej aktualizacji
+            } catch (error) {
+                console.error('Błąd podczas aktualizacji ilości produktów', error);
+            } finally {
+                localStorage.removeItem("eShopPaymentIntent");
+            }
         }
-    }, [paymentSuccess, finalProducts]);
+
+    }; 
+    const handleSetOrderProcessing = (processing: boolean) => {
+        setLoading(processing); 
+    }
+
+    console.log(paymentSuccess); 
     return <div className="w-full">
-        {clientSecret && cartProducts && (
-            <Elements options={options} stripe={stripePromise}>
-                <CheckoutForm clientSecret={clientSecret} handleSetPaymentSuccess={handleSetPaymentSuccess}/>
+        {(clientSecret && finalProducts !== undefined)&& (
+           
+            <Elements options={options} stripe={stripePromise} >
+                <CheckoutForm clientSecret={paymentIntent.client_secret} handleSetOrderProcessing={handleSetOrderProcessing} handleSetPaymentSuccess={handleSetPaymentSuccess}/>
             </Elements>
+           
+           
         )}
-        {loading && <div className="text-center">Ładowanie zakupu...</div>}
+        
         {error && (
             <div className="text-center text-rose-500">Something went wrong...</div>
             )}
-        {paymentSuccess && (
+        {paymentSuccess === true ? (
             <div className="flex items-center flex-col gap-4">
                 <div className="text-teal-500 text-center">Transakcja zakończona sukcesem</div>
                 <div className="max-w-[220px] w-full">
@@ -129,7 +125,7 @@ const CheckoutClient = () => {
                     />
                 </div>
             </div>
-        )}
+        ): loading && <div className="text-center">Ładowanie zakupu...</div>}
     </div>;
 }
 export default CheckoutClient;

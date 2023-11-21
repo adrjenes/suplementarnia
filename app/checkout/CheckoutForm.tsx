@@ -10,12 +10,14 @@ import Button from "@/app/components/Button";
 
 interface CheckoutFormProps {
     clientSecret: string;
-    handleSetPaymentSuccess: (value: boolean) => void;
+    handleSetPaymentSuccess: (value: boolean) => void,
+    handleSetOrderProcessing: (value: boolean) => void;
 }
 
 const CheckoutForm: React.FC<CheckoutFormProps> = ({
     clientSecret,
     handleSetPaymentSuccess,
+    handleSetOrderProcessing,
 }) => {
     const {cartTotalAmount, handleClearCart, handleSetPaymentIntent} = useCart();
     const stripe = useStripe();
@@ -34,11 +36,14 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
     }, [stripe]);
 
     const handleSubmit = async(e: React.FormEvent) => {
+
         e.preventDefault();
+        handleSetOrderProcessing(true); 
         if (!stripe || !elements) {
             return;
         }
         setIsLoading(true);
+        
         stripe
             .confirmPayment({
                 elements,
@@ -49,6 +54,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
                 handleClearCart();
                 handleSetPaymentSuccess(true);
                 handleSetPaymentIntent(null);
+                handleSetOrderProcessing(false); 
             }
             setIsLoading(false);
         })
