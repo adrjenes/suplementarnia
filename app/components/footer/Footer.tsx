@@ -12,30 +12,26 @@ const Footer = () => {
             <Container>
                 <div className="flex flex-col md:flex-row justify-between pt-16 pb-8">
                     <FooterList>
-                        <h3 className="text-base font-bold mb-2">Sklep</h3>
-                        <Link href="#">Suplements</Link>
-                        <Link href="#">Suplements</Link>
-                        <Link href="#">Suplements</Link>
-                        <Link href="#">Suplements</Link>
-                        <Link href="#">Suplements</Link>
-                        <Link href="#">Suplements</Link>
+                        <h3 className="text-base font-bold mb-2">TWOJE KONTO</h3>
+                        <Link href="/cart">Koszyk</Link>
+                        <Link href="/orders">Zamówienia</Link>
+                        <Link href="/logout">Wyloguj</Link>
+                        <Link href="/login">Zaloguj</Link>
+                        <Link href="/register">Zarejestruj</Link>
                     </FooterList>
                     <FooterList>
                         <h3 className="text-base font-bold mb-2">Pomoc</h3>
                         <Link href="#">Kontakt</Link>
-                        <Link href="#">Polityka wysyłki</Link>
+                        <Link href="#">O nas</Link>
                         <Link href="#">Zwroty & wymiany</Link>
-                        <Link href="#">Strona pomocy</Link>
-                        <Link href="#">Kontakt</Link>
-                        <Link href="#">FAQs</Link>
                     </FooterList>
                     <div className="w-full md:w-1/3 mb-6 md:mb-0">
                         <h3 className="text-base font-bold mb-2">O nas</h3>
                         <p className="mb-2">
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                            Facilis iure natus nihil officiis perspiciatis repudiandae!
-                            Eligendi ipsum officiis possimus vero. Culpa distinctio et maxime voluptas.
-                            Assumenda dolore esse obcaecati totam.
+                            Suplementarnia to Twój zaufany sklep z suplementami.
+                            Oferujemy starannie wyselekcjonowane produkty, które wspierają zdrowie i dobre samopoczucie.
+                            Nasza misja to dostarczanie wysokiej jakości, bezpiecznych i skutecznych suplementów dla każdego.<br/>
+                            Więcej informacji znajdziesz <Link href="/about"><b>TUTAJ</b></Link>
                         </p>
                         <p>&copy; {new Date().getFullYear()} Suplementarnia. All rights reserved.</p>
                     </div>

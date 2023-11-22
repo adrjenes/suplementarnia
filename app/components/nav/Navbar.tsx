@@ -26,7 +26,7 @@ const Navbar = async () => {
                     </div>
                 </Container>
             </div>
-    </div>
+        </div>
     )
 }
 export default Navbar;

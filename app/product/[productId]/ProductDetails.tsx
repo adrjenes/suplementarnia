@@ -78,12 +78,12 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({product}) => {
             });
         }, [product.details, cartProduct.selectedFlavour]);
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 max-lg:gap-6 gap-12 ">
             <ProductImage cartProduct={cartProduct} product={product} handleFlavourSelect={handleFlavourSelect}/>
-            <div className="flex flex-col gap-3 text-slate-500 text-sm">
-                <h2 className="text-3xl font-bold text-slate-700 pt-2">{product.name}</h2>
-                <div className="flex items-center pt-1.5">
-                    <p className="text-gray-400 pr-5 uppercase pt-0.5 ">{product.brand}</p>
+            <div className="flex flex-col gap-3 text-slate-500 text-sm max-md:pt-6">
+                <h2 className="text-3xl font-bold text-slate-700">{product.name}</h2>
+                <div className="flex items-center max-lg:pt-0 pt-1.5">
+                    <p className="text-gray-400  uppercase max-lg:pt-0 pt-0.5 pr-2">{product.brand}</p>
                     <Rating value={productRating} readOnly/>
                     <div className="pl-2 pt-0.5">Opinie: {product.reviews.length}</div>
                 </div>
@@ -93,33 +93,35 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({product}) => {
                     </div>
                     <p className="whitespace-normal break-words">{product.description}</p>
                 </div>
-                <div className="flex py-4">
+                <div className="flex max-lg:py-0 py-4">
                     <span className="font-semibold text-green-600">KATEGORIA:</span>
                     <p className="pl-2 font-bold">{product.category}</p>
                 </div>
 
-                            <SetFlavour cartProduct={cartProduct} details={product.details}
-                                        handleFlavourSelect={handleFlavourSelect}/>
-                <div className="text-3xl pt-4">{formatPrice(product.price)}</div>
-                            <div className="max-w-[300px] pt-6">
-                                <button
-                                    label="Dodaj do koszyka"
-                                    onClick={() => handleAddProductToCart(cartProduct)}
-                                    disabled={isProductInCart}
-                                    className={`${isProductInCart ? 'rounded border-[3px] border-gray-600 gap-2 cursor-not-allowed py-3 px-8 w-full flex items-center justify-center text-white bg-gray-600' : 
-                                        'rounded border-[3px] border-green-600 gap-2 cursor-pointer py-3 px-8 w-full flex items-center justify-center text-white bg-green-600'}`}
-                                ><div className="flex items-center gap-2">
-                                    {isProductInCart ?
-                                        <>
-                                            <p>Dodano do koszyka</p><CheckCircleIcon className="flex-shrink-0 font-bold"/>
-                                        </> :
-                                        <>
-                                            <p>Dodaj do koszyka</p><AddShoppingCartIcon className="flex-shrink-0 font-bold"/>
-                                        </>
-                                    }
-                                </div>
-                                    </button>
-                            </div>
+                <SetFlavour cartProduct={cartProduct} details={product.details}
+                            handleFlavourSelect={handleFlavourSelect} isProductInCart={isProductInCart}/>
+                <div className="max-lg:gap-3 max-xl:flex max-xl:text-center max-xl:items-center max-xl:gap-6 ">
+                    <div className="text-3xl max-lg:pt-0 pt-4 font-bold">{formatPrice(product.price)}</div>
+                    <div className="max-w-[300px] max-lg:pt-0 pt-6 ">
+                        <button
+                            label="Dodaj do koszyka"
+                            onClick={() => handleAddProductToCart(cartProduct)}
+                            disabled={isProductInCart}
+                            className={`${isProductInCart ? 'rounded border-[3px] border-gray-600 gap-2 cursor-not-allowed py-3 px-8 w-full flex items-center justify-center text-white bg-gray-600' :
+                                'rounded border-[3px] border-green-600 gap-2 cursor-pointer py-3 px-8 w-full flex items-center justify-center text-white bg-green-600'}`}
+                        ><div className="flex items-center gap-2">
+                            {isProductInCart ?
+                                <>
+                                    <p>Dodano do koszyka</p><CheckCircleIcon className="flex-shrink-0 font-bold"/>
+                                </> :
+                                <>
+                                    <p>Dodaj do koszyka</p><AddShoppingCartIcon className="flex-shrink-0 font-bold"/>
+                                </>
+                            }
+                        </div>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     )
