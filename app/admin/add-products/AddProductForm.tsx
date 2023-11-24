@@ -230,7 +230,7 @@ const AddProductForm = () => {
                                     key={`flavour-${index}`}
                                     id={`details[${index}].flavour`}
                                     name={`details[${index}].flavour`}
-                                    label={`Smak nr. ${index + 1}`}
+                                    label={`Smak ${index + 1}`}
                                     disabled={isLoading}
                                     register={register}
                                     errors={errors}
@@ -241,7 +241,7 @@ const AddProductForm = () => {
                                     key={`quantity-${index}`}
                                     id={`details[${index}].quantity`}
                                     name={`details[${index}].quantity`}
-                                    label={`Ilość dla smaku nr. ${index + 1}`}
+                                    label={`Ilość ${index + 1}`}
                                     disabled={isLoading}
                                     register={register}
                                     errors={errors}

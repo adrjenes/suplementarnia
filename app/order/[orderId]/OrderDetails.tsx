@@ -55,22 +55,25 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({order}) => {
                                 <Status text="Dostarczono" icon={MdDone} bg="bg-green-200" color="text-green-700"/>
                             ) :
                             (
-                            <></>
-                        )}
+                                <></>
+                            )}
             </div>
         </div>
         <div>Data: {moment(order.createDate).fromNow()}</div>
         <div>
             <h2 className="font-semibold mt-4 mb-2">Zamówione produkty</h2>
-            <div className="grid grid-cols-5 text-xs gap-4 pb-2 items-center">
-                <div className="col-span-2 justify-self-start">PRODUKT</div>
-                <div className="justify-self-center">CENA</div>
-                <div className="justify-self-center">ILOŚĆ</div>
-                <div className="justify-self-end">ŁĄCZNIE</div>
+            <div className="grid grid-cols-5 text-xs gap-4 pb-2 pt-6 items-center font-bold">
+                <div className="col-span-2 justify-self-start font-bold">PRODUKT</div>
+                <div className="justify-self-center font-bold">CENA</div>
+                <div className="justify-self-center font-bold">ILOŚĆ</div>
+                <div className="justify-self-end font-bold">ŁĄCZNIE</div>
             </div>
             {order.products &&
                 order.products.map((item) => {
-                    return <OrderItem key={item.id} item={item}></OrderItem>
+                    return <>
+                        <OrderItem key={item.id} item={item}></OrderItem>
+                        <div className="border-b-2 border-green-200"/>
+                    </>
                 })}
         </div>
 

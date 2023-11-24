@@ -20,7 +20,7 @@ const CartClient: React.FC<CartClientProps> = ({currentUser}) => {
     const {cartProducts, handleClearCart, cartTotalAmount, handleSetPaymentIntent} = useCart();
     const [color, setColor] = useState("");
     const router = useRouter();
-    const [loadingPaymentStep, setLoadingPaymentStep] = useState(false); 
+    const [loadingPaymentStep, setLoadingPaymentStep] = useState(false);
 
     if (!cartProducts || cartProducts.length == 0) {
         return (
@@ -37,10 +37,10 @@ const CartClient: React.FC<CartClientProps> = ({currentUser}) => {
     }
     const handlePaymentStep =async () => {
         console.log("hello motherfucker");
-        setLoadingPaymentStep(true); 
-        console.log(cartTotalAmount); 
+        setLoadingPaymentStep(true);
+        console.log(cartTotalAmount);
         const paymentIntentBody = {
-            items: [], 
+            items: [],
             totalAmount: formatPrice(cartTotalAmount),
             payment_intent_id: null
         }
@@ -48,39 +48,33 @@ const CartClient: React.FC<CartClientProps> = ({currentUser}) => {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(paymentIntentBody)
-            
+
         }).then((res) => {
             console.log(res);
             if (res.status === 401) {
                 return router.push('/login');
             } else if(
-                res.status === 400 
+                res.status === 400
             ) {
-                console.error("eerror creating payment intent"); 
-                return router.push('/cart'); 
+                console.error("eerror creating payment intent");
+                return router.push('/cart');
             }
             return res.json();
         }).then((data) => {
             if(data.paymentIntent) {
-                handleSetPaymentIntent(data.paymentIntent); 
-                setLoadingPaymentStep(false); 
+                handleSetPaymentIntent(data.paymentIntent);
+                setLoadingPaymentStep(false);
                 router.push('/checkout');
-            } 
+            }
         }).catch((error) => {
-            
-            
+
+
             console.error("Something went wrong");
         })
-
-
-
-        
-
-
     }
     console.log(cartProducts)
     return <div>
-        <div className="flex text-center items-center pt-2 gap-3">
+        <div className="flex  items-center  gap-3">
             <p className={`text-4xl font-bold hover:text-green-700 ${color}`}
                onMouseEnter={() => setColor("text-green-700")}
                onMouseLeave={() => setColor("")}
@@ -95,30 +89,32 @@ const CartClient: React.FC<CartClientProps> = ({currentUser}) => {
                 >Wyczyść koszyk</button>
             </div>
         </div>
+        <div className="max-xl:block flex pt-8 justify-between">
+            <div className="h-[550px] max-sm:h-[300px] overflow-auto hover:overflow-y-scroll">
+                {cartProducts && cartProducts.map((item, idx) => {
+                    return <ItemContent key={idx} item={item}/>
+                })}
+            </div>
+            <div>
 
-        <div className="pt-6">
-            {cartProducts && cartProducts.map((item, idx) => {
-                return <ItemContent key={idx} item={item}/>
-            })}
-        </div>
-        <div className="border-t-[1.5px] border-slate-200 py-6 flex justify-between gap-4">
+                <div className="text-sm flex flex-col gap-4 items-start max-xl:pt-4">
+                    <div className="flex justify-between w-full text-base font-semibold">
+                        <span>Suma całkowita</span>
+                        <span>{formatPrice(cartTotalAmount)}</span>
+                    </div>
 
-            <div className="text-sm flex flex-col gap-5 items-start">
-                <div className="flex justify-between w-full text-base font-semibold">
-                    <span>Suma całkowita</span>
-                    <span>{formatPrice(cartTotalAmount)}</span>
+                    <p className="text-slate-500">VAT i przesyłka obliczane przy podsumowaniu koszyka</p>
+                    <Button
+                        label={currentUser ? loadingPaymentStep ? "Ładowanie formularza płatności" : 'Przejdź do płatności'   : 'Zaloguj się, aby przejść do płatności'}
+                        outline = {currentUser ? false : true}
+                        onClick={handlePaymentStep}
+
+                    />
+                    <Link href={"/"} className="text-green-700 flex items-center gap-1">
+                        <MdArrowBack/>
+                        <span>Kontynuuj zakupy</span>
+                    </Link>
                 </div>
-                <p className="text-slate-500">VAT i przesyłka obliczane przy podsumowaniu koszyka</p>
-                <Button
-                    label={currentUser ? loadingPaymentStep ? "Ładowanie formularza płatności" : 'Przejdź do płatności'   : 'Zaloguj się, aby przejść do płatności'}
-                    outline = {currentUser ? false : true}
-                    onClick={handlePaymentStep}
-
-                />
-                <Link href={"/"} className="text-green-700 flex items-center gap-1">
-                    <MdArrowBack/>
-                    <span>Kontynuuj zakupy</span>
-                </Link>
             </div>
         </div>
     </div>

@@ -4,7 +4,7 @@ import {PiPill} from "react-icons/pi";
 import {GiPowder} from "react-icons/gi";
 import {GrRun} from "react-icons/gr";
 import {AiFillFire} from "react-icons/ai";
-
+import { GiTreeRoots } from "react-icons/gi";
 export const categories = [
     {
         label: 'Wszystko',
@@ -29,5 +29,9 @@ export const categories = [
     {
         label: 'Spalacz tłuszczu',
         icon: AiFillFire
-    }
+    },
+    {
+        label: 'Adaptogeny',
+        icon: GiTreeRoots
+    },
 ]

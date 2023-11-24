@@ -9,7 +9,7 @@ interface SetQtyProps {
     handleQtyDecrease: () => void;
     maxQuantity: number | null;
 }
-const btnStyles = 'border-[1.2px] border-slate-300 px-2 rounded';
+const btnStyles = 'border-[1.2px] border-slate-300 max-sm:px-1 px-2 rounded';
 
 const SetQuantity: React.FC<SetQtyProps> = ({
                                                 cartCounter,
@@ -21,7 +21,7 @@ const SetQuantity: React.FC<SetQtyProps> = ({
     return (
         <div className="flex gap-8 items-center">
             {cartCounter ? null : <div className="font-semibold">ILOŚĆ</div>}
-            <div className="flex gap-4 items-center text-base">
+            <div className="flex max-sm:flex-col max-sm:gap-1 gap-4 items-center text-base">
                 <button
                     onClick={handleQtyDecrease}
                     className={btnStyles}
