@@ -15,7 +15,7 @@ interface ItemContentProps {
 
 const ItemContent: React.FC<ItemContentProps> = ({item}) => {
     const {handleRemoveProductFromCart, handleCartQtyIncrease, handleCartQtyDecrease} = useCart();
-
+    console.log(item);
     return <div>
         <div className="grid max-md:gap-2 max-md:grid-cols-5 grid-cols-6 text-md py-4 items-center lg:pr-6">
             <div className="max-md:col-span-3 col-span-2 justify-self-start flex gap-2">

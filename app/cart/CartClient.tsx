@@ -36,7 +36,6 @@ const CartClient: React.FC<CartClientProps> = ({currentUser}) => {
         )
     }
     const handlePaymentStep =async () => {
-        console.log("hello motherfucker");
         setLoadingPaymentStep(true);
         console.log(cartTotalAmount);
         const paymentIntentBody = {
@@ -56,7 +55,7 @@ const CartClient: React.FC<CartClientProps> = ({currentUser}) => {
             } else if(
                 res.status === 400
             ) {
-                console.error("eerror creating payment intent");
+                console.error("error creating payment intent");
                 return router.push('/cart');
             }
             return res.json();
@@ -67,12 +66,9 @@ const CartClient: React.FC<CartClientProps> = ({currentUser}) => {
                 router.push('/checkout');
             }
         }).catch((error) => {
-
-
             console.error("Something went wrong");
         })
     }
-    console.log(cartProducts)
     return <div>
         <div className="flex  items-center  gap-3">
             <p className={`text-4xl font-bold hover:text-green-700 ${color}`}

@@ -20,7 +20,7 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({order}) => {
         <div>ID Zamówienia: {order.id}</div>
         <div>
             Całkowita kwota: {" "}
-            <span className="font-bold">{formatPrice(order.amount / 100)}</span>
+            <span className="font-bold">{formatPrice(order.amount)}</span>
         </div>
         <div className="flex gap-2 items-center">
             <div>Status płatności:</div>
@@ -59,7 +59,7 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({order}) => {
                             )}
             </div>
         </div>
-        <div>Data: {moment(order.createDate).fromNow()}</div>
+        <div>Data zamówienia: {moment(order.createDate).fromNow()}</div>
         <div>
             <h2 className="font-semibold mt-4 mb-2">Zamówione produkty</h2>
             <div className="grid grid-cols-5 text-xs gap-4 pb-2 pt-6 items-center font-bold">

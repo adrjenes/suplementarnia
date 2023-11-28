@@ -18,13 +18,12 @@ const OrderClient: React.FC<OrdersClientProps> = ({orders}) => {
     const router = useRouter();
     const storage = getStorage(firebaseApp);
     let rows: any = [];
-
     if (orders) {
         rows = orders.map((order) => {
             return {
                 id: order.id,
                 customer: order.user.name,
-                amount: formatPrice(order.amount / 100),
+                amount: formatPrice(order.amount),
                 paymentStatus: order.status,
                 date: moment(order.createDate).fromNow(),
                 deliveryStatus: order.deliveryStatus,

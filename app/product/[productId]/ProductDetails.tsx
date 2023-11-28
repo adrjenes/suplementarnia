@@ -16,7 +16,7 @@ export type CartProductType = {
     name: string,
     description: string,
     category: string,
-    inStock: boolean,
+    inStock?: boolean,
     brand: string,
     selectedImage: SelectedImageType,
     selectedFlavour: SelectedFlavourType,
@@ -74,13 +74,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({product}) => {
         setCartProduct((prevProduct) => {
             return { ...prevProduct, quantity: prevProduct.quantity + 1 };
         });
-    }, [cartProduct]);
+    }, []);
 
     const handleCartQtyDecrease = useCallback(() => {
         setCartProduct((prevProduct) => {
             return { ...prevProduct, quantity: prevProduct.quantity - 1 };
         });
-    }, [cartProduct]);
+    }, []);
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 max-lg:gap-6 gap-12 ">
@@ -115,7 +115,10 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({product}) => {
                             <div className="max-w-[300px] max-lg:pt-0 pt-6 ">
                                 <button
                                     label="Dodaj do koszyka"
-                                    onClick={() => handleAddProductToCart(cartProduct)}
+                                    onClick={() => {
+                                        const { inStock, ...cartProductWithoutInStock } = cartProduct;
+                                        handleAddProductToCart(cartProductWithoutInStock);
+                                    }}
                                     disabled={isProductInCart || cartProduct.selectedFlavour.quantity <= 0}
                                     className={`${isProductInCart || cartProduct.selectedFlavour.quantity <= 0 ? 'rounded border-[3px] border-gray-600 gap-2 cursor-not-allowed py-3 px-8 w-full flex items-center justify-center text-white bg-gray-600' :
                                         'rounded border-[3px] border-green-600 gap-2 cursor-pointer py-3 px-8 w-full flex items-center justify-center text-white bg-green-600'}`}

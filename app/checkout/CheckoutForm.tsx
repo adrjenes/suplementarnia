@@ -15,10 +15,10 @@ interface CheckoutFormProps {
 }
 
 const CheckoutForm: React.FC<CheckoutFormProps> = ({
-    clientSecret,
-    handleSetPaymentSuccess,
-    handleSetOrderProcessing,
-}) => {
+                                                       clientSecret,
+                                                       handleSetPaymentSuccess,
+                                                       handleSetOrderProcessing,
+                                                   }) => {
     const {cartTotalAmount, handleClearCart, handleSetPaymentIntent} = useCart();
     const stripe = useStripe();
     const elements = useElements();
@@ -38,23 +38,23 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
     const handleSubmit = async(e: React.FormEvent) => {
 
         e.preventDefault();
-        handleSetOrderProcessing(true); 
+        handleSetOrderProcessing(true);
         if (!stripe || !elements) {
             return;
         }
         setIsLoading(true);
-        
+
         stripe
             .confirmPayment({
                 elements,
                 redirect: 'if_required'
-        }).then(result => {
+            }).then(result => {
             if (!result.error) {
                 toast.success('Checkout Success')
                 handleClearCart();
                 handleSetPaymentSuccess(true);
                 handleSetPaymentIntent(null);
-                handleSetOrderProcessing(false); 
+                handleSetOrderProcessing(false);
             }
             setIsLoading(false);
         })
@@ -70,7 +70,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
                     mode: "shipping",
                     allowedCountries: ["PL", "US"],
                 }}
-                />
+            />
             <h2 className="font-semibold mt-4 mb-2">Informacje o płatności</h2>
             <PaymentElement id="payment-element" options={{ layout: "tabs" }}/>
             <div className="py-4 text-center text-slate-700 text-4xl font-bold">
@@ -81,17 +81,3 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
     )
 }
 export default CheckoutForm;
-
-
-
-
-
-
-
-
-
-
-
-
-
-

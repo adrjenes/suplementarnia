@@ -53,7 +53,6 @@ export const CartContextProvider = (props: Props) => {
             }
         }
         getTotals();
-        console.log(cartProducts)
     }, [cartProducts])
 
     const handleAddProductToCart = useCallback((productToAdd: CartProductType) => {

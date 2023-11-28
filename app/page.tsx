@@ -6,22 +6,18 @@ import NullData from "@/app/components/NullData";
 import List from "@/app/components/list/List";
 import React from "react";
 
-
 interface HomeProps {
   searchParams: IProductParams
 }
-
 export default async function Home({searchParams}: HomeProps) {
   const products = await getProducts(searchParams);
   console.log(products);
-  if (products.length === 0) {
-    return <NullData title="Nie znaleziono produktów. Wybierz kategorie."/>
-  }
+  if (products.length === 0) { return <NullData title="Nie znaleziono produktów. Wybierz kategorie."/>}
 
   function shuffleArray(array: any) {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]]; // Poprawne przypisanie destrukturyzujące
+      [array[i], array[j]] = [array[j], array[i]];
     }
     return array;
   }
@@ -43,7 +39,6 @@ export default async function Home({searchParams}: HomeProps) {
                 return <ProductCard key={product.id} data={product}/>
               })}
             </div>
-
           </Container>
         </div>
       </div>

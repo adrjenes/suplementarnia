@@ -1,5 +1,4 @@
 "use client"
-
 import {useCallback, useEffect, useState} from "react";
 import Heading from "@/app/components/Heading";
 import Input from "@/app/components/inputs/input";
@@ -15,6 +14,7 @@ import {getDownloadURL, getStorage, ref, uploadBytesResumable} from "@firebase/s
 import firebaseApp from "@/libs/firebase";
 import axios from "axios";
 import {useRouter} from "next/navigation";
+
 export type ImageType = { image: File | null; }
 export type UploadedImageType = { image: string; }
 
@@ -48,69 +48,29 @@ const AddProductForm = () => {
 
     const onSubmit: SubmitHandler<FieldValues> = async (data) => {
         const validDetails = data.details.filter(detail => detail.flavour.trim() !== '' && detail.quantity != null && !isNaN(detail.quantity) && detail.quantity > 0);
-        console.log(validDetails)
-        if (validDetails.length === 0) {
-            setIsLoading(false);
-            return toast.error("Proszę dodać przynajmniej jeden ważny wpis smaku i ilości.");
-        }
+        if (validDetails.length === 0) { setIsLoading(false); return toast.error("Proszę dodać przynajmniej jeden ważny wpis smaku i ilości.");}
 
         const isFlavourLengthValid = validDetails.every(detail => detail.flavour.length >= 3 && detail.flavour.length <= 25);
         const isQuantityValid = validDetails.every(detail => detail.quantity >= 1 && detail.quantity <= 10000);
 
-        if (!isFlavourLengthValid) {
-            setIsLoading(false);
-            return toast.error("Nazwa każdego smaku musi mieć od 3 do 20 znaków.");
-        }
-
-        if (!isQuantityValid) {
-            setIsLoading(false);
-            return toast.error("Ilość każdego smaku musi być w zakresie od 1 do 10000.");
-        }
+        if (!isFlavourLengthValid) { setIsLoading(false); return toast.error("Nazwa każdego smaku musi mieć od 3 do 20 znaków.");}
+        if (!isQuantityValid) { setIsLoading(false); return toast.error("Ilość każdego smaku musi być w zakresie od 1 do 10000.");}
 
         const formattedDetails = validDetails.map(detail => ({
             flavour: detail.flavour,
             quantity: +detail.quantity
         }));
+        const formattedData = { ...data, details: formattedDetails};
 
-        const nameLength = data.name.length;
-        if (nameLength < 3 || nameLength > 30) {
-            setIsLoading(false);
-            return toast.error('Nazwa musi zawierać od 3 do 30 liter');
-        }
+        if (data.name.length < 3 || data.name.length > 30) { setIsLoading(false); return toast.error('Nazwa musi zawierać od 3 do 30 liter'); }
+        if (data.name.length < 1 || data.brand.length > 20) { setIsLoading(false); return toast.error('Nazwa producenta musi zawierać od 3 do 30 liter');}
+        if (data.price < 0 || data.price > 5000) { setIsLoading(false); return toast.error('Cena musi być większa niż 0 i mniejsza niż 5000'); }
+        if (data.description.length > 500) { setIsLoading(false); return toast.error('Opis nie może przekraczać 500 znaków'); }
+        if (!formattedData.category) { setIsLoading(false); return toast.error('Kategoria nie jest zaznaczona');}
+        if (!formattedData.images || formattedData.images.length === 0) { setIsLoading(false); return toast.error("Brak zdjęcia!"); }
 
-        const brandLength = data.brand.length;
-        if (brandLength < 1 || brandLength > 20) {
-            setIsLoading(false);
-            return toast.error('Nazwa producenta musi zawierać od 3 do 30 liter');
-        }
-
-        if (data.price < 0 || data.price > 5000) {
-            setIsLoading(false);
-            return toast.error('Cena musi być większa niż 0 i mniejsza niż 5000');
-        }
-
-        const descriptionLength = data.description.length;
-        if (descriptionLength > 500) {
-            setIsLoading(false);
-            return toast.error('Opis nie może przekraczać 500 znaków');
-        }
-
-        const formattedData = {
-            ...data,
-            details: formattedDetails
-        };
         setIsLoading(true);
         let uploadedImages: UploadedImageType[] = [];
-
-        if (!formattedData.category) {
-            setIsLoading(false);
-            return toast.error('Kategoria nie jest zaznaczona');
-        }
-        if (!formattedData.images || formattedData.images.length === 0) {
-            setIsLoading(false);
-            return toast.error("Brak zdjęcia!");
-        }
-
 
         const handleImageUploads = async () => {
             toast("Tworzenie produktu, zajmie to kilka sekund...");
@@ -120,7 +80,6 @@ const AddProductForm = () => {
                     const storage = getStorage(firebaseApp);
                     const storageRef = ref(storage, `products/${fileName}`);
                     const uploadTask = uploadBytesResumable(storageRef, item.image);
-
                     await new Promise<void>((resolve, reject) => {
                         uploadTask.on(
                             'state_changed',
@@ -128,10 +87,8 @@ const AddProductForm = () => {
                                 const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                                 console.log('Przesyłanie jest w ' + progress + '% ukończone');
                                 switch (snapshot.state) {
-                                    case 'paused': console.log('Przesyłanie zostało wstrzymane');
-                                        break;
-                                    case 'running': console.log('Przesyłanie trwa');
-                                        break;
+                                    case 'paused': break;
+                                    case 'running': break;
                                 }
                             },
                             (error) => reject(error),
@@ -142,13 +99,11 @@ const AddProductForm = () => {
                                         image: downloadURL,
                                     })
                                     resolve();
-                                })
-                                    .catch((error) => reject(error));
+                                }).catch((error) => reject(error));
                             });
-                    })}
-            } catch (error) {
-                setIsLoading(false);
-                return toast.error("Błąd podczas obsługi przesyłania obrazów.");
+                    })
+                }
+            } catch (error) { setIsLoading(false); return toast.error("Błąd podczas obsługi przesyłania obrazów.");
             }
         };
         await handleImageUploads();
@@ -158,12 +113,8 @@ const AddProductForm = () => {
             setIsProductCreated(true);
             router.refresh();
         })
-            .catch((error) => {
-            toast.error("Coś poszło nie tak z zapisem produktu do bazy danych.")
-        })
-            .finally(() => {
-                setIsLoading(false);
-            })
+            .catch((error) => { toast.error("Coś poszło nie tak z zapisem produktu do bazy danych.") })
+            .finally(() => { setIsLoading(false); })
     }
     const category = watch("category");
 
@@ -176,9 +127,7 @@ const AddProductForm = () => {
     }
     const addImageToState = useCallback((value: ImageType) => {
         setImages((prev) => {
-            if (!prev) {
-                return [value];
-            }
+            if (!prev) { return [value]; }
             return [...prev, value];
         })
     }, []);
@@ -193,25 +142,25 @@ const AddProductForm = () => {
             return;
         }
         setInputCount(count);
-
     };
 
     const handleImageCountChange = (e) => {
         const count = parseInt(e.target.value, 10) || 0;
-        if (count < 0 || count > 10) {
-            toast.error('Ilość zdjęć musi być w zakresie od 0 do 10');
+        if (count < 0 || count > 10) { toast.error('Ilość zdjęć musi być w zakresie od 0 do 10');
             return;
         }
         setImageCount(count);
     };
 
-    return (
-        <>
+    return <>
             <Heading title="Dodaj produkt" center/>
-            <Input id="name" label="'Nazwa' - 'Ilość'" disabled={isLoading} register={register} errors={errors} required/>
-            <Input id="price" label="Cena" disabled={isLoading} register={register} errors={errors} type="number" required/>
+            <Input id="name" label="'Nazwa' - 'Ilość'" disabled={isLoading} register={register} errors={errors}
+                   required/>
+            <Input id="price" label="Cena" disabled={isLoading} register={register} errors={errors} type="number"
+                   required/>
             <Input id="brand" label="Producent" disabled={isLoading} register={register} errors={errors} required/>
-            <TextArea id="description" label="Opis produktu" disabled={isLoading} register={register} errors={errors} required/>
+            <TextArea id="description" label="Opis produktu" disabled={isLoading} register={register} errors={errors}
+                      required/>
             <CustomCheckBox id="inStock" register={register} label="Ten produkt jest na stanie"/>
             <div className="w-full font-medium">
                 <div className="mb-2 font-semibold">Zaznacz kategorie</div>
@@ -219,8 +168,9 @@ const AddProductForm = () => {
                     {categories.map((item) => {
                         if (item.label == 'Wszystko') return null;
                         return <div key={item.label} className="col-span">
-                                <CategoryInput onClick={(category) => setCustomValue('category', category)} selected={category == item.label} label={item.label} icon={item.icon}/>
-                            </div>
+                            <CategoryInput onClick={(category) => setCustomValue('category', category)}
+                                           selected={category == item.label} label={item.label} icon={item.icon}/>
+                        </div>
                     })}
                 </div>
                 <div className="py-10 flex flex-col items-start">
@@ -242,8 +192,11 @@ const AddProductForm = () => {
                     <div className="py-4 grid grid-cols-2 w-full gap-4">
                         {Array.from({length: inputCount}, (_, index) => (
                             <div key={index} className="flex gap-2">
-                                <Input key={`flavour-${index}`} id={`details[${index}].flavour`} name={`details[${index}].flavour`} label={`Smak ${index + 1}`} disabled={isLoading} register={register} errors={errors} required placeholder={`Smak ${index + 1}`}/>
-                                <Input key={`quantity-${index}`} id={`details[${index}].quantity`} name={`details[${index}].quantity`} label={`Ilość ${index + 1}`} disabled={isLoading} register={register} errors={errors} required type="number" placeholder={`Ilość`} className="text-center"/>
+                                <Input key={`flavour-${index}`} id={`details[${index}].flavour`} name={`details[${index}].flavour`} label={`Smak ${index + 1}`}
+                                       disabled={isLoading} register={register} errors={errors} required placeholder={`Smak ${index + 1}`}/>
+
+                                <Input key={`quantity-${index}`} id={`details[${index}].quantity`} name={`details[${index}].quantity`} label={`Ilość ${index + 1}`}
+                                       disabled={isLoading} register={register} errors={errors} required type="number" placeholder={`Ilość`} className="text-center"/>
                             </div>
                         ))}
                     </div>
@@ -251,6 +204,5 @@ const AddProductForm = () => {
             </div>
             <Button label={isLoading ? 'Ładowanie...' : 'Dodaj produkt'} onClick={handleSubmit(onSubmit)}/>
         </>
-    )
 }
 export default AddProductForm;

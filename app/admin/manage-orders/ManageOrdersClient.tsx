@@ -10,7 +10,7 @@ import {useCallback} from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import {useRouter} from "next/navigation";
-import {deleteObject, getStorage, ref} from "@firebase/storage";
+import {getStorage} from "@firebase/storage";
 import firebaseApp from "@/libs/firebase";
 import moment from "moment";
 
