@@ -1,5 +1,4 @@
 "use client"
-
 import React, {useEffect, useState} from "react";
 import {useCart} from "@/hooks/useCart";
 import {useElements, useStripe, PaymentElement, AddressElement} from "@stripe/react-stripe-js";
@@ -14,11 +13,7 @@ interface CheckoutFormProps {
     handleSetOrderProcessing: (value: boolean) => void;
 }
 
-const CheckoutForm: React.FC<CheckoutFormProps> = ({
-                                                       clientSecret,
-                                                       handleSetPaymentSuccess,
-                                                       handleSetOrderProcessing,
-                                                   }) => {
+const CheckoutForm: React.FC<CheckoutFormProps> = ({clientSecret, handleSetPaymentSuccess, handleSetOrderProcessing}) => {
     const {cartTotalAmount, handleClearCart, handleSetPaymentIntent} = useCart();
     const stripe = useStripe();
     const elements = useElements();
@@ -26,22 +21,15 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
     const formattedPrice = formatPrice(cartTotalAmount);
 
     useEffect(() => {
-        if (!stripe) {
-            return;
-        }
-        if (!clientSecret) {
-            return;
-        }
+        if (!stripe) { return }
+        if (!clientSecret) { return }
         handleSetPaymentSuccess(false);
     }, [stripe]);
 
     const handleSubmit = async(e: React.FormEvent) => {
-
         e.preventDefault();
         handleSetOrderProcessing(true);
-        if (!stripe || !elements) {
-            return;
-        }
+        if (!stripe || !elements) { return }
         setIsLoading(true);
 
         stripe
@@ -50,7 +38,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
                 redirect: 'if_required'
             }).then(result => {
             if (!result.error) {
-                toast.success('Checkout Success')
+                toast.success('Płatność powiodła się')
                 handleClearCart();
                 handleSetPaymentSuccess(true);
                 handleSetPaymentIntent(null);

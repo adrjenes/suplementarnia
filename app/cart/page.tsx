@@ -4,7 +4,6 @@ import {getCurrentUser} from "@/actions/getCurrentUser";
 
 const Cart = async () => {
     const currentUser = await getCurrentUser();
-
     return (
         <div className="pt-14">
             <Container>

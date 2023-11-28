@@ -2,13 +2,10 @@ import Container from "@/app/components/Container";
 import FooterList from "@/app/components/footer/FooterList";
 import Link from "next/link";
 import {MdFacebook} from "react-icons/md";
-import {AiFillInstagram, AiFillTwitterCircle, AiFillYoutube} from "react-icons/ai";
+import {AiFillInstagram, AiFillYoutube} from "react-icons/ai";
 import {FaTiktok} from "react-icons/fa";
-
-
 const Footer = () => {
-    return (
-        <footer className="bg-green-300  text-sm mt-16">
+    return <footer className="bg-green-300  text-sm mt-16">
             <Container>
                 <div className="flex flex-col md:flex-row justify-between pt-16 pb-8">
                     <FooterList>
@@ -21,9 +18,9 @@ const Footer = () => {
                     </FooterList>
                     <FooterList>
                         <h3 className="text-base font-bold mb-2">Pomoc</h3>
-                        <Link href="#">Kontakt</Link>
-                        <Link href="#">O nas</Link>
-                        <Link href="#">Zwroty & wymiany</Link>
+                        <Link href="/contact">Kontakt</Link>
+                        <Link href="/about">O nas</Link>
+
                     </FooterList>
                     <div className="w-full md:w-1/3 mb-6 md:mb-0">
                         <h3 className="text-base font-bold mb-2">O nas</h3>
@@ -33,7 +30,7 @@ const Footer = () => {
                             Nasza misja to dostarczanie wysokiej jakości, bezpiecznych i skutecznych suplementów dla każdego.<br/>
                             Więcej informacji znajdziesz <Link href="/about"><b>TUTAJ</b></Link>
                         </p>
-                        <p>&copy; {new Date().getFullYear()} Suplementarnia. All rights reserved.</p>
+                        <p>{new Date().getFullYear()} Suplementarnia. For your health.</p>
                     </div>
                     <FooterList>
                         <h3 className="text-base font-bold mb-2">Obserwuj nas</h3>
@@ -59,6 +56,6 @@ const Footer = () => {
                 </div>
             </Container>
         </footer>
-    )
+
 }
 export default Footer;

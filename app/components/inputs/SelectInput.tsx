@@ -26,7 +26,6 @@ const SelectImage: React.FC<SelectFlavourProps> = ({item, addFlavourToState, isF
         setFlavour(value);
         addFlavourToState({...item, image: value});
     }, []);
-
     const handleCheck = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.checked) {
             setFlavour(null);

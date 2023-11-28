@@ -35,6 +35,7 @@ const Button: React.FC<ButtonProps> = ({
             w-full
             border-green-600
             hover:border-green-700
+            hover:text-white
             flex
             items-center
             justify-center

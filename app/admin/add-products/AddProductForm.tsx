@@ -143,15 +143,14 @@ const AddProductForm = () => {
         }
         setInputCount(count);
     };
-
     const handleImageCountChange = (e) => {
         const count = parseInt(e.target.value, 10) || 0;
-        if (count < 0 || count > 10) { toast.error('Ilość zdjęć musi być w zakresie od 0 do 10');
+        if (count < 0 || count > 10) {
+            toast.error('Ilość zdjęć musi być w zakresie od 0 do 10');
             return;
         }
         setImageCount(count);
     };
-
     return <>
             <Heading title="Dodaj produkt" center/>
             <Input id="name" label="'Nazwa' - 'Ilość'" disabled={isLoading} register={register} errors={errors}
@@ -168,8 +167,7 @@ const AddProductForm = () => {
                     {categories.map((item) => {
                         if (item.label == 'Wszystko') return null;
                         return <div key={item.label} className="col-span">
-                            <CategoryInput onClick={(category) => setCustomValue('category', category)}
-                                           selected={category == item.label} label={item.label} icon={item.icon}/>
+                            <CategoryInput onClick={(category) => setCustomValue('category', category)} selected={category == item.label} label={item.label} icon={item.icon}/>
                         </div>
                     })}
                 </div>

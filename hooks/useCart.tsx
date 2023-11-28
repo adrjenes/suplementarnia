@@ -25,7 +25,6 @@ export const CartContextProvider = (props: Props) => {
     const [cartTotalQty, setCartTotalQty] = useState(0);
     const [cartTotalAmount, setCartTotalAmount] = useState(0);
     const [cartProducts, setCartProducts] = useState<CartProductType[] | null>(null);
-
     const [paymentIntent, setPaymentIntent] = useState<string | null>(null);
 
     useEffect(() => {
@@ -36,6 +35,7 @@ export const CartContextProvider = (props: Props) => {
         setCartProducts(cProducts);
         setPaymentIntent(paymentIntent);
     }, []);
+
     useEffect(() => {
         const getTotals = () => {
             if (cartProducts) {
@@ -58,11 +58,9 @@ export const CartContextProvider = (props: Props) => {
     const handleAddProductToCart = useCallback((productToAdd: CartProductType) => {
         setCartProducts((prevProducts) => {
             const existingProducts = prevProducts || [];
-
             const isProductAlreadyInCart = existingProducts.some(
                 item => item.id === productToAdd.id && item.selectedFlavour.flavour === productToAdd.selectedFlavour.flavour
             );
-
             if (isProductAlreadyInCart) {
                 toast.error('Produkt o tym smaku znajduje się już w koszyku.');
                 return existingProducts; // Nie dodawaj produktu, zwróć obecny stan koszyka
@@ -73,7 +71,6 @@ export const CartContextProvider = (props: Props) => {
             }
         });
     }, []);
-
     const handleRemoveProductFromCart = useCallback((productToRemove: CartProductType) => {
         window.location.reload();
         if (cartProducts) {
@@ -119,7 +116,6 @@ export const CartContextProvider = (props: Props) => {
                 }
                 return item;
             });
-
             localStorage.setItem("eShopCartItems", JSON.stringify(updatedCart));
             return updatedCart;
         });
@@ -148,12 +144,10 @@ export const CartContextProvider = (props: Props) => {
         paymentIntent,
         handleSetPaymentIntent,
     }
-
     return <CartContext.Provider value={value} {...props}/>
 }
 export const useCart = () => {
     const context = useContext(CartContext);
-
     if (context === null) {
         throw new Error("useCart musi być użyty z CartContextProvider");
     }

@@ -1,9 +1,7 @@
 "use client"
-
 import {useCart} from "@/hooks/useCart";
 import {useCallback, useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
-import toast from "react-hot-toast";
 import {loadStripe, StripeElementsOptions} from "@stripe/stripe-js";
 import {Elements} from "@stripe/react-stripe-js";
 import CheckoutForm from "@/app/checkout/CheckoutForm";
@@ -23,10 +21,7 @@ const CheckoutClient = () => {
     const router = useRouter();
 
     useEffect(() => {
-        if(paymentIntent !== null) {
-            setClientSecret(paymentIntent.client_secret);
-            console.log(paymentIntent);
-        }
+        if(paymentIntent !== null) {setClientSecret(paymentIntent.client_secret)}
     }, [paymentIntent]);
 
     const mergeProducts = useCallback(() => {
@@ -34,7 +29,6 @@ const CheckoutClient = () => {
         if (cartProducts !== undefined && cartProducts != null && cartProducts.length > 0) {
             const mergedProducts: MergedProduct[] = [];
             cartProducts.forEach((product) => {
-                //add or update updatedproduct
                 const existingIndex = mergedProducts.findIndex((item) => item.id === product.id);
                 const flavour = {flavour: product.selectedFlavour.flavour as string , quantity: product.quantity};
                 const updatedProduct: MergedProduct = {
@@ -67,33 +61,22 @@ const CheckoutClient = () => {
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({items: finalProducts, payment_intent_id: paymentIntent.id, totalAmount: formatPrice(cartTotalAmount)}) // Użyj finalProducts
                 }).then((res) => {
-                    //handle error
                     return res.json();
                 }).then((data) => {
-
-                    if(data.updated_order){
-                        setPaymentSuccess(true);
-                    }
+                    if(data.updated_order) {setPaymentSuccess(true)}
                 });
-            } catch (error) {
-                console.error('Błąd podczas aktualizacji ilości produktów', error);
-            } finally {
-                localStorage.removeItem("eShopPaymentIntent");
-            }
+            } catch (error) { console.error('Błąd podczas aktualizacji ilości produktów', error)
+            } finally { localStorage.removeItem("eShopPaymentIntent") }
         }
     };
-    const handleSetOrderProcessing = (processing: boolean) => {
-        setLoading(processing);
-    }
+    const handleSetOrderProcessing = (processing: boolean) => { setLoading(processing) }
     return <div className="w-full">
         {(clientSecret && finalProducts !== undefined)&& (
             <Elements options={options} stripe={stripePromise} >
                 <CheckoutForm clientSecret={paymentIntent.client_secret} handleSetOrderProcessing={handleSetOrderProcessing} handleSetPaymentSuccess={handleSetPaymentSuccess}/>
             </Elements>
         )}
-        {error && (
-            <div className="text-center text-rose-500">Something went wrong...</div>
-        )}
+        {error && (<div className="text-center text-rose-500">Something went wrong...</div>)}
         {paymentSuccess === true ? (
             <div className="flex items-center flex-col gap-4">
                 <div className="text-teal-500 text-center">Transakcja zakończona sukcesem</div>

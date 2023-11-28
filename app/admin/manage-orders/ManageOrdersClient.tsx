@@ -26,7 +26,7 @@ const ManageOrdersClient: React.FC<ManageOrdersClientProps> = ({orders}) => {
             return {
                 id: order.id,
                 customer: order.user.name,
-                amount: formatPrice(order.amount / 100),
+                amount: formatPrice(order.amount),
                 paymentStatus: order.status,
                 date: moment(order.createDate).fromNow(),
                 deliveryStatus: order.deliveryStatus,
@@ -34,10 +34,10 @@ const ManageOrdersClient: React.FC<ManageOrdersClientProps> = ({orders}) => {
         });
     }
     const columns: GridColDef[] = [
-        {field: 'id', headerName: 'ID', width: 220},
-        {field: 'customer', headerName: 'Nazwa klienta', width: 150},
-        {field: 'amount', headerName: 'Kwota', width: 130,
-            renderCell: (params) => { return <div className="font-bold text-slate-800">{params.row.amount}</div> }
+        { field: 'id', headerName: 'ID', width: 220, align: 'center', headerAlign: 'center' },
+        { field: 'customer', headerName: 'Nazwa klienta', width: 150, align: 'center', headerAlign: 'center' },
+        { field: 'amount', headerName: 'Kwota', width: 130, align: 'center', headerAlign: 'center',
+            renderCell: (params) => { return <div className="font-bold text-red-500 text-center">{params.row.amount}</div> }
         },
         {field: 'paymentStatus', headerName: 'Status płatności', width: 130,
             renderCell: (params) => {
@@ -127,7 +127,7 @@ const ManageOrdersClient: React.FC<ManageOrdersClientProps> = ({orders}) => {
 
     return (
         <div className="max-w-[1150px] m-auto text-xl">
-            <div className="mb-4 mt-8">
+            <div className="mt-8 text-green-700 pb-12">
                 <Heading title="Zarządzaj zamówieniami" center/>
             </div>
             <div style={{height: 600, width: "100%"}}>

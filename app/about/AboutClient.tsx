@@ -1,8 +1,5 @@
 "use client"
 import React from "react";
-import { FaPhoneAlt } from "react-icons/fa";
-import { IoIosMail } from "react-icons/io";
-
 
 const AboutClient = () => {
     return (

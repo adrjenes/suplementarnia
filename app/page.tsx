@@ -26,6 +26,7 @@ export default async function Home({searchParams}: HomeProps) {
     return array;
   }
   const shuffledProducts = shuffleArray(products);
+  console.log(shuffledProducts)
   return (
       <div>
         <List/>
