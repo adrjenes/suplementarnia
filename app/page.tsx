@@ -11,8 +11,12 @@ interface HomeProps {
 }
 export default async function Home({searchParams}: HomeProps) {
   const products = await getProducts(searchParams);
-  console.log(products);
-  if (products.length === 0) { return <NullData title="Nie znaleziono produktów. Wybierz kategorie."/>}
+  if (products.length === 0) {
+    return <>
+      <List/>
+      <NullData title="Nie znaleziono produktów. Wybierz kategorie."/>
+    </>
+  }
 
   function shuffleArray(array: any) {
     for (let i = array.length - 1; i > 0; i--) {

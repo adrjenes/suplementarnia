@@ -1,4 +1,12 @@
-const Contact = () => {
-    return <div>lol</div>
+import Container from "@/app/components/Container";
+import ContactClient from "@/app/contact/ContactClient";
+
+
+const Page = () => {
+    return <div>
+        <Container>
+            <ContactClient/>
+        </Container>
+    </div>
 }
-export default Contact;
+export default Page;

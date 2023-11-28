@@ -13,7 +13,7 @@ const Category: React.FC<CategoryProps> = ({label, icon: Icon, selected}) => {
     const router = useRouter();
     const params = useSearchParams();
     const handleClick = useCallback(() => {
-        if (label === 'All') {
+        if (label === 'Wszystko') {
             router.push('/')
         } else {
             let currentQuery = {};

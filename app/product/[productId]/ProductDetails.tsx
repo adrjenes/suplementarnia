@@ -111,7 +111,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({product}) => {
                         </div>
 
                         <div className="max-lg:gap-3 max-xl:flex max-xl:text-center max-xl:items-center max-xl:gap-6 ">
-                            <div className="text-3xl max-lg:pt-0 pt-4 font-bold">{formatPrice(product.price)}</div>
+                            <div className="text-3xl max-lg:pt-0 pt-4 font-bold">{formatPrice(product.price)} / szt.</div>
                             <div className="max-w-[300px] max-lg:pt-0 pt-6 ">
                                 <button
                                     label="Dodaj do koszyka"
