@@ -17,14 +17,9 @@ interface RegisterFormProps {
     currentUser: SafeUser | null
 }
 
-const RegisterForm: React.FC<RegisterFormProps> = ({currentUser}) => {
-
+const RegisterForm: React.FC<RegisterFormProps> = ({ currentUser }) => {
     const [isLoading, setIsLoading] = useState(false);
-    const {
-        register,
-        handleSubmit,
-        formState: {errors},
-    } = useForm<FieldValues>({
+    const { register, handleSubmit, formState: { errors } } = useForm({
         defaultValues: {
             name: "",
             email: "",
@@ -36,12 +31,42 @@ const RegisterForm: React.FC<RegisterFormProps> = ({currentUser}) => {
 
     useEffect(() => {
         if (currentUser) {
-            router.push("/cart")
+            router.push("/cart");
             router.refresh();
         }
-    }, []);
+    }, [currentUser, router]);
 
-    const onSubmit: SubmitHandler<FieldValues> = (data) => {
+    const validateUsername = (value) => {
+        if (value.length < 3 || value.length > 20) {
+            toast.error("Nazwa użytkownika powinna mieć od 3 do 20 znaków");
+            return false;
+        }
+        return true;
+    };
+
+    const validateEmail = (value) => {
+        if (!value.includes('@') || value.length < 6 || value.length > 30) {
+            toast.error("Nieprawidłowy adres e-mail");
+            return false;
+        }
+        return true;
+    };
+
+    const validatePassword = (value) => {
+        const hasNumber = /\d/;
+        const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+        if (!hasNumber.test(value) || !hasSpecialChar.test(value) || value.length < 6 || value.length > 30) {
+            toast.error("Hasło musi zawierać znak specjalny, liczbę oraz mieć od 6 do 30 znaków");
+            return false;
+        }
+        return true;
+    };
+
+    const onSubmit = (data) => {
+        if (!validateUsername(data.name) || !validateEmail(data.email) || !validatePassword(data.password)) {
+            setIsLoading(false);
+            return;
+        }
 
         setIsLoading(true);
         axios.post("/api/register", data).then(() => {

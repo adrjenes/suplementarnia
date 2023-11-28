@@ -21,8 +21,6 @@ const CheckoutClient = () => {
     const [error, setError] = useState(false);
     const [clientSecret, setClientSecret] = useState('');
     const [paymentSuccess, setPaymentSuccess] = useState(false);
-    
-
     const router = useRouter();
     useEffect(() => {
         if(paymentIntent !== null) {

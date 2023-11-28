@@ -8,9 +8,6 @@ import TextArea from "@/app/components/inputs/TextArea";
 import CustomCheckBox from "@/app/components/inputs/CustomCheckBox";
 import {categories} from "@/utils/Categories";
 import CategoryInput from "@/app/components/inputs/CategoryInput";
-import UnitSelector from "@/app/components/inputs/UnitSelector";
-import FlavorArea from "@/app/components/inputs/FlavorSelect";
-import DropImage from "@/app/components/inputs/DropImage";
 import SelectImage from "@/app/components/inputs/SelectImage";
 import Button from "@/app/components/Button";
 import toast from "react-hot-toast";
@@ -18,14 +15,8 @@ import {getDownloadURL, getStorage, ref, uploadBytesResumable} from "@firebase/s
 import firebaseApp from "@/libs/firebase";
 import axios from "axios";
 import {useRouter} from "next/navigation";
-
-
 export type ImageType = { image: File | null; }
 export type UploadedImageType = { image: string; }
-export type FlavourType = {
-    flavour: string;
-    quantity: number;
-}
 
 const AddProductForm = () => {
     const router = useRouter();
@@ -47,7 +38,6 @@ const AddProductForm = () => {
         }
     });
     useEffect(() => setCustomValue('images', images), [images]);
-
     useEffect(() => {
         if (isProductCreated) {
             reset();
@@ -56,17 +46,59 @@ const AddProductForm = () => {
         }
     }, [isProductCreated]);
 
-
     const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-        const formattedDetails = data.details.map(detail => ({
+        const validDetails = data.details.filter(detail => detail.flavour.trim() !== '' && detail.quantity != null && !isNaN(detail.quantity) && detail.quantity > 0);
+        console.log(validDetails)
+        if (validDetails.length === 0) {
+            setIsLoading(false);
+            return toast.error("Proszę dodać przynajmniej jeden ważny wpis smaku i ilości.");
+        }
+
+        const isFlavourLengthValid = validDetails.every(detail => detail.flavour.length >= 3 && detail.flavour.length <= 25);
+        const isQuantityValid = validDetails.every(detail => detail.quantity >= 1 && detail.quantity <= 10000);
+
+        if (!isFlavourLengthValid) {
+            setIsLoading(false);
+            return toast.error("Nazwa każdego smaku musi mieć od 3 do 20 znaków.");
+        }
+
+        if (!isQuantityValid) {
+            setIsLoading(false);
+            return toast.error("Ilość każdego smaku musi być w zakresie od 1 do 10000.");
+        }
+
+        const formattedDetails = validDetails.map(detail => ({
             flavour: detail.flavour,
             quantity: +detail.quantity
         }));
+
+        const nameLength = data.name.length;
+        if (nameLength < 3 || nameLength > 30) {
+            setIsLoading(false);
+            return toast.error('Nazwa musi zawierać od 3 do 30 liter');
+        }
+
+        const brandLength = data.brand.length;
+        if (brandLength < 1 || brandLength > 20) {
+            setIsLoading(false);
+            return toast.error('Nazwa producenta musi zawierać od 3 do 30 liter');
+        }
+
+        if (data.price < 0 || data.price > 5000) {
+            setIsLoading(false);
+            return toast.error('Cena musi być większa niż 0 i mniejsza niż 5000');
+        }
+
+        const descriptionLength = data.description.length;
+        if (descriptionLength > 500) {
+            setIsLoading(false);
+            return toast.error('Opis nie może przekraczać 500 znaków');
+        }
+
         const formattedData = {
             ...data,
             details: formattedDetails
         };
-        console.log("Dane produktu ", formattedData);
         setIsLoading(true);
         let uploadedImages: UploadedImageType[] = [];
 
@@ -78,10 +110,7 @@ const AddProductForm = () => {
             setIsLoading(false);
             return toast.error("Brak zdjęcia!");
         }
-        if (!formattedData.details.every(detail => detail.flavour && detail.quantity != null)) {
-            setIsLoading(false);
-            return toast.error("Wypełnij pole o smaku i ilości!");
-        }
+
 
         const handleImageUploads = async () => {
             toast("Tworzenie produktu, zajmie to kilka sekund...");
@@ -99,38 +128,26 @@ const AddProductForm = () => {
                                 const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                                 console.log('Przesyłanie jest w ' + progress + '% ukończone');
                                 switch (snapshot.state) {
-                                    case 'paused':
-                                        console.log('Przesyłanie zostało wstrzymane');
+                                    case 'paused': console.log('Przesyłanie zostało wstrzymane');
                                         break;
-                                    case 'running':
-                                        console.log('Przesyłanie trwa');
+                                    case 'running': console.log('Przesyłanie trwa');
                                         break;
                                 }
                             },
-                            (error) => {
-                                console.log("Błąd podczas przesyłania obrazu ", error);
-                                reject(error);
-                            },
+                            (error) => reject(error),
                             () => {
                                 getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
                                     uploadedImages.push({
                                         ...item,
                                         image: downloadURL,
                                     })
-                                    console.log('Plik dostępny pod adresem: ', downloadURL);
                                     resolve();
                                 })
-                                    .catch((error) => {
-                                        console.log("Błąd downloadURL dostępny pod adresem: ", error);
-                                        reject(error);
-                                    });
-                            }
-                        );
-                    })
-                }
+                                    .catch((error) => reject(error));
+                            });
+                    })}
             } catch (error) {
                 setIsLoading(false);
-                console.log("Błąd podczas obsługi przesyłania obrazów: ", error);
                 return toast.error("Błąd podczas obsługi przesyłania obrazów.");
             }
         };
@@ -140,7 +157,8 @@ const AddProductForm = () => {
             toast.success('Produkt utworzony!');
             setIsProductCreated(true);
             router.refresh();
-        }).catch((error) => {
+        })
+            .catch((error) => {
             toast.error("Coś poszło nie tak z zapisem produktu do bazy danych.")
         })
             .finally(() => {
@@ -169,87 +187,63 @@ const AddProductForm = () => {
 
     const handleChangeFlavour = (e) => {
         const count = parseInt(e.target.value, 10) || 0;
+        if (count < 1 || count > 16) {
+            toast.error('Liczba smaków musi być w zakresie od 1 do 16');
+            setInputCount(0);
+            return;
+        }
         setInputCount(count);
+
+    };
+
+    const handleImageCountChange = (e) => {
+        const count = parseInt(e.target.value, 10) || 0;
+        if (count < 0 || count > 10) {
+            toast.error('Ilość zdjęć musi być w zakresie od 0 do 10');
+            return;
+        }
+        setImageCount(count);
     };
 
     return (
         <>
             <Heading title="Dodaj produkt" center/>
-            <Input id="name" label="'Nazwa' - 'Ilość'" disabled={isLoading} register={register} errors={errors}
-                   required/>
-            <Input id="price" label="Cena" disabled={isLoading} register={register} errors={errors} type="number"
-                   required/>
+            <Input id="name" label="'Nazwa' - 'Ilość'" disabled={isLoading} register={register} errors={errors} required/>
+            <Input id="price" label="Cena" disabled={isLoading} register={register} errors={errors} type="number" required/>
             <Input id="brand" label="Producent" disabled={isLoading} register={register} errors={errors} required/>
-            <TextArea id="description" label="Opis produktu" disabled={isLoading} register={register} errors={errors}
-                      required/>
+            <TextArea id="description" label="Opis produktu" disabled={isLoading} register={register} errors={errors} required/>
             <CustomCheckBox id="inStock" register={register} label="Ten produkt jest na stanie"/>
-
             <div className="w-full font-medium">
                 <div className="mb-2 font-semibold">Zaznacz kategorie</div>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-h[50vh] overflow-y-auto">
                     {categories.map((item) => {
-                        if (item.label == 'Wszystko') {
-                            return null;
-                        }
-                        return (
-                            <div key={item.label} className="col-span">
-                                <CategoryInput onClick={(category) => setCustomValue('category', category)}
-                                               selected={category == item.label}
-                                               label={item.label}
-                                               icon={item.icon}
-                                />
+                        if (item.label == 'Wszystko') return null;
+                        return <div key={item.label} className="col-span">
+                                <CategoryInput onClick={(category) => setCustomValue('category', category)} selected={category == item.label} label={item.label} icon={item.icon}/>
                             </div>
-                        )
                     })}
                 </div>
                 <div className="py-10 flex flex-col items-start">
                     <div className="w-full flex flex-col flex-wrap gap-4">
                         <div className="flex items-center">
                             <div className="mr-2">Wprowadź liczbę zdjęć do dodania:</div>
-                            <input type="number" placeholder="0" onChange={(e) => setImageCount(parseInt(e.target.value, 10) || 0)}
-                                   className="w-[70px] p-2 outline-none bg-white font-light border-2 rounded-md"/>
+                            <input type="number" placeholder="0" onChange={handleImageCountChange} className="w-[70px] p-2 outline-none bg-white font-light border-2 rounded-md"/>
                         </div>
                         <div className="w-full flex flex-wrap gap-4">
-                            {Array.from({ length: imageCount }, (_, index) => (
-                                <SelectImage key={index} isProductCreated={isProductCreated} addImageToState={addImageToState}
-                                             removeImageFromState={removeImageFromState}/>
+                            {Array.from({length: imageCount}, (_, index) => (
+                                <SelectImage key={index} isProductCreated={isProductCreated} addImageToState={addImageToState} removeImageFromState={removeImageFromState}/>
                             ))}
                         </div>
                     </div>
-
-
                     <div className="flex items-center pt-10">
                         <div className="mr-2">Wprowadź liczbę smaków i ich ilości do wyboru:</div>
-                        <input type="number" placeholder="0" onChange={handleChangeFlavour}
-                               className="w-[70px] p-2 outline-none bg-white font-light border-2 rounded-md"/>
+                        <input type="number" placeholder="0" onChange={handleChangeFlavour} className="w-[70px] p-2 outline-none bg-white font-light border-2 rounded-md"/>
                     </div>
                     <div className="py-4 grid grid-cols-2 w-full gap-4">
-                        {Array.from({ length: inputCount }, (_, index) => (
+                        {Array.from({length: inputCount}, (_, index) => (
                             <div key={index} className="flex gap-2">
-                                <Input
-                                    key={`flavour-${index}`}
-                                    id={`details[${index}].flavour`}
-                                    name={`details[${index}].flavour`}
-                                    label={`Smak ${index + 1}`}
-                                    disabled={isLoading}
-                                    register={register}
-                                    errors={errors}
-                                    required
-                                    placeholder={`Smak ${index + 1}`}
-                                />
-                                <Input
-                                    key={`quantity-${index}`}
-                                    id={`details[${index}].quantity`}
-                                    name={`details[${index}].quantity`}
-                                    label={`Ilość ${index + 1}`}
-                                    disabled={isLoading}
-                                    register={register}
-                                    errors={errors}
-                                    required
-                                    type="number"
-                                    placeholder={`Ilość`}
-                                    className="text-center"
-                                />
+                                <Input key={`flavour-${index}`} id={`details[${index}].flavour`} name={`details[${index}].flavour`} label={`Smak ${index + 1}`} disabled={isLoading} register={register} errors={errors} required placeholder={`Smak ${index + 1}`}/>
+                                <Input key={`quantity-${index}`} id={`details[${index}].quantity`} name={`details[${index}].quantity`} label={`Ilość ${index + 1}`} disabled={isLoading} register={register} errors={errors} required type="number" placeholder={`Ilość`} className="text-center"/>
                             </div>
                         ))}
                     </div>

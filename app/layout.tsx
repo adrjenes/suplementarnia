@@ -6,6 +6,9 @@ import Footer from "@/app/components/footer/Footer";
 import React from "react";
 import CartProvider from "@/providers/CartProvider";
 import {Toaster} from "react-hot-toast";
+import Categories from "@/app/components/nav/Categories";
+import List from "@/app/components/list/List";
+
 
 
 const poppins = Poppins({

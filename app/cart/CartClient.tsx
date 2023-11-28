@@ -90,12 +90,12 @@ const CartClient: React.FC<CartClientProps> = ({currentUser}) => {
             </div>
         </div>
         <div className="max-xl:block flex pt-8 justify-between">
-            <div className="h-[550px] max-sm:h-[300px] overflow-auto hover:overflow-y-scroll">
+            <div className="h-[550px] max-sm:h-[300px] xl:w-[70%] overflow-auto hover:overflow-y-scroll ">
                 {cartProducts && cartProducts.map((item, idx) => {
                     return <ItemContent key={idx} item={item}/>
                 })}
             </div>
-            <div>
+            <div className="xl:pl-12">
 
                 <div className="text-sm flex flex-col gap-4 items-start max-xl:pt-4">
                     <div className="flex justify-between w-full text-base font-semibold">

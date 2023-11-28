@@ -54,6 +54,11 @@ model Product {
   reviews           Review[]
 }
 
+model Billboard {
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  images            Image[]
+}
+
 model Review {
   id                String      @id @default(auto()) @map("_id") @db.ObjectId
   userId            String      @db.ObjectId

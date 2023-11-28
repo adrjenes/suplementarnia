@@ -7,13 +7,13 @@ import {RiArrowLeftSLine, RiArrowRightSLine} from "react-icons/ri";
 
 const slides = [
     {
-        url: '/images/banner/baner1.png',
+        url: 'https://firebasestorage.googleapis.com/v0/b/fir-suplementarnia.appspot.com/o/products%2F1700886021322-baner1.png?alt=media&token=99fbfc09-00d1-4258-a2ce-2004e31ccf45',
     },
     {
-        url: '/images/banner/baner2.png',
+        url: 'https://firebasestorage.googleapis.com/v0/b/fir-suplementarnia.appspot.com/o/products%2F1700886043502-baner2.png?alt=media&token=eeeee53c-c881-4a6c-94ef-736750b50dd4',
     },
     {
-        url: '/images/banner/baner3.png',
+        url: 'https://firebasestorage.googleapis.com/v0/b/fir-suplementarnia.appspot.com/o/products%2F1700886083827-baner3.png?alt=media&token=b58c6ae3-44b5-437f-9950-4786818c5508',
     }
 ];
 
@@ -56,7 +56,7 @@ const HomeBanner = () => {
     }, [currentIndex]);
 
     return (
-        <div className="max-w-[1500px] ssm:h-[100px] sm:h-[200px] md:h-[300px] lg:h-[350px] w-full m-auto relative group">
+        <div className="max-w-[1700px] ssm:h-[100px] sm:h-[200px] md:h-[300px] lg:h-[500px] w-full m-auto relative group">
             <div
                 style={{
                     backgroundImage: `url(${slides[currentIndex].url}`,

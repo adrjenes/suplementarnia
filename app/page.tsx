@@ -4,6 +4,7 @@ import ProductCard from "@/app/components/products/ProductCard";
 import getProducts, {IProductParams} from "@/actions/getProducts";
 import NullData from "@/app/components/NullData";
 import List from "@/app/components/list/List";
+import React from "react";
 
 
 interface HomeProps {
@@ -12,7 +13,7 @@ interface HomeProps {
 
 export default async function Home({searchParams}: HomeProps) {
   const products = await getProducts(searchParams);
-
+  console.log(products);
   if (products.length === 0) {
     return <NullData title="Nie znaleziono produktów. Wybierz kategorie."/>
   }
@@ -25,7 +26,6 @@ export default async function Home({searchParams}: HomeProps) {
     return array;
   }
   const shuffledProducts = shuffleArray(products);
-
   return (
       <div>
         <List/>
@@ -34,7 +34,7 @@ export default async function Home({searchParams}: HomeProps) {
             <HomeBanner/>
             <div className="pt-14">
               <div className="bg-green-500 py-0.5"></div>
-              <div className="py-3 text-2xl flex justify-center bg-green-100 font-bold">Wszystkie produkty</div>
+              <div className="py-3 text-2xl flex justify-center bg-green-100 font-bold">{searchParams.category === undefined ? 'Wszystkie produkty' : <>{searchParams.category}</>}</div>
               <div className="bg-green-500 py-0.5"></div>
             </div>
             <div
@@ -43,6 +43,7 @@ export default async function Home({searchParams}: HomeProps) {
                 return <ProductCard key={product.id} data={product}/>
               })}
             </div>
+
           </Container>
         </div>
       </div>
