@@ -28,7 +28,7 @@ const Button: React.FC<ButtonProps> = ({
             onClick={onClick}
             disabled={disabled}
             className={`
-            rounded-md
+            
             hover:bg-green-700
             font-sans
             transition

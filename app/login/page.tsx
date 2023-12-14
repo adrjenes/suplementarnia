@@ -7,9 +7,11 @@ const Login = async () => {
     const currentUser = await getCurrentUser();
     return (
         <Container>
-            <FormWrap>
-                <LoginForm currentUser={currentUser}/>
-            </FormWrap>
+                <div className="h-[700px] flex justify-center items-center">
+                    <LoginForm currentUser={currentUser}/>
+                </div>
+
+
         </Container>
     )
 }

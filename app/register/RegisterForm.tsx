@@ -12,6 +12,8 @@ import toast from "react-hot-toast";
 import {signIn} from "next-auth/react";
 import {useRouter} from "next/navigation";
 import {SafeUser} from "@/types";
+import {RiLoginBoxLine} from "react-icons/ri";
+import {GiPillDrop} from "react-icons/gi";
 
 interface RegisterFormProps {
     currentUser: SafeUser | null
@@ -95,11 +97,13 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ currentUser }) => {
         }
     }
 
-    return (
-        <>
-            <Heading title="Zarejestruj się"/>
-            <Button outline label="Kontynuuj z Google" icon={AiOutlineGoogle} onClick={() => {signIn('google')}}/>
-            <hr className="bg-slate-300 w-full h-px"/>
+    return<div className="flex w-full items-center align-center  justify-between">
+                <div className="w-[40%] max-md:text-xs max-md:flex max-md:flex-col max-md:w-full">
+                    <div className="flex items-center gap-3">
+                        <Heading title="Zarejestruj się"/>
+                        <RiLoginBoxLine size={40} />
+                    </div>
+                    <div className="py-4"></div>
             <Input
                 id="name"
                 label="Nazwa użytkownika"
@@ -108,6 +112,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ currentUser }) => {
                 errors={errors}
                 required
             />
+                    <div className="pt-6"/>
             <Input
                 id="email"
                 label="E-mail"
@@ -116,6 +121,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ currentUser }) => {
                 errors={errors}
                 required
             />
+                    <div className="pt-6"/>
             <Input
                 id="password"
                 label="Hasło"
@@ -125,13 +131,20 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ currentUser }) => {
                 required
                 type="password"
             />
+                    <div className="pt-6"/>
             <Button label={isLoading ? "Ładowanie..." : "Zarejestruj się"} onClick={handleSubmit(onSubmit)}/>
-            <p className="text-sm">
+                    <div className="flex flex-col items-center pt-6">
+                        <p className="text-xl pb-6">LUB</p>
+                        <Button outline label="Kontynuuj z Google" icon={AiOutlineGoogle} onClick={() => {signIn('google')}}/>
+                    </div>
+            <p className="text-sm pt-6">
                 Posiadasz już konto? <Link className="underline" href="/login">
                 Zaloguj się
             </Link>
             </p>
-        </>
-    );
+                </div>
+        <div className="text-6xl text-gray-300 w-[60%] text-center flex flex-col items-center gap-y-4 max-md:text-lg">SUPLEMENTARNIA<GiPillDrop size={200}/></div>
+    </div>
+
 };
 export default RegisterForm;

@@ -7,9 +7,9 @@ const Register = async () => {
     const currentUser = await getCurrentUser();
     return (
         <Container>
-            <FormWrap>
+            <div className="h-[700px] flex justify-center items-center">
                 <RegisterForm currentUser={currentUser}/>
-            </FormWrap>
+            </div>
         </Container>
     )
 }

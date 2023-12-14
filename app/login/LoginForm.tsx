@@ -11,7 +11,8 @@ import {signIn} from "next-auth/react";
 import toast from "react-hot-toast";
 import {useRouter} from "next/navigation";
 import {SafeUser} from "@/types";
-
+import { RiLoginBoxLine } from "react-icons/ri";
+import { GiPillDrop } from "react-icons/gi";
 interface LoginFormProps {
     currentUser: SafeUser | null
 }
@@ -55,39 +56,51 @@ const LoginForm: React.FC<LoginFormProps> = ({currentUser}) => {
         })
     }
 
-    if (currentUser) {
-        return <p className="text-center">Zalogowano. Przekierowuje...</p>
-    }
+    if (currentUser) { return <p className="text-center">Zalogowano. Przekierowuje...</p> }
 
     return (
-        <>
-            <Heading title="Zaloguj się"/>
-            <Button outline label="Zaloguj się z Google" icon={AiOutlineGoogle} onClick={() => {signIn('google')}}/>
-            <hr className="bg-slate-300 w-full h-px"/>
-            <Input
-                id="email"
-                label="E-mail"
-                disabled={isLoading}
-                register={register}
-                errors={errors}
-                required
-            />
-            <Input
-                id="password"
-                label="Hasło"
-                disabled={isLoading}
-                register={register}
-                errors={errors}
-                required
-                type="password"
-            />
-            <Button label={isLoading ? "Ładowanie..." : "Zaloguj się"} onClick={handleSubmit(onSubmit)}/>
-            <p className="text-sm">
-                Nie posiadasz konta? <Link className="underline" href="/register">
-                Zarejestruj się
-            </Link>
-            </p>
-        </>
+        <div className="flex w-full items-center align-center justify-between">
+            <div className="w-[40%] max-md:text-xs max-md:flex max-md:flex-col max-md:w-full">
+                <div className="flex items-center gap-3">
+                    <Heading title="Zaloguj się"/>
+                    <RiLoginBoxLine size={40} />
+                </div>
+                <div className="py-4"></div>
+                <Input
+                    id="email"
+                    label="E-mail"
+                    disabled={isLoading}
+                    register={register}
+                    errors={errors}
+                    required
+                />
+                <div className="py-4"></div>
+                <Input
+                    id="password"
+                    label="Hasło"
+                    disabled={isLoading}
+                    register={register}
+                    errors={errors}
+                    required
+                    type="password"
+                />
+                <div className="py-4"></div>
+                <Button label={isLoading ? "Ładowanie..." : "Zaloguj się"} onClick={handleSubmit(onSubmit)}/>
+
+
+                <div className="flex flex-col items-center pt-6">
+                    <p className="text-xl pb-6">LUB</p>
+                    <Button outline label="Zaloguj się z Google" icon={AiOutlineGoogle} onClick={() => {signIn('google')}}/>
+                </div>
+                <p className="text-sm pt-6">
+                    Nie posiadasz konta? <Link className="underline" href="/register">
+                    Zarejestruj się
+                </Link>
+                </p>
+            </div>
+            <div className="text-6xl text-gray-300 w-[60%] text-center flex flex-col items-center gap-y-4 max-md:text-lg">SUPLEMENTARNIA <GiPillDrop size={200}/></div>
+
+        </div>
     );
 };
 export default LoginForm;

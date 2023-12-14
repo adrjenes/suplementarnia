@@ -9,7 +9,8 @@ import {SafeUser} from "@/types";
 import {useRouter} from "next/navigation";
 import React, {useState} from "react";
 import {FaShoppingBasket} from "react-icons/fa";
-
+import { VscDebugContinue } from "react-icons/vsc";
+import { MdOutlinePayment } from "react-icons/md";
 interface CartClientProps { currentUser: SafeUser | null; }
 
 const CartClient: React.FC<CartClientProps> = ({currentUser}) => {
@@ -74,17 +75,20 @@ const CartClient: React.FC<CartClientProps> = ({currentUser}) => {
                 })}
             </div>
             <div className="xl:pl-12">
-                <div className="text-sm flex flex-col gap-4 items-start max-xl:pt-4">
-                    <div className="flex justify-between w-full text-base font-semibold">
-                        <span>Suma całkowita</span>
-                        <span>{formatPrice(cartTotalAmount)}</span>
+                <div className="text-sm flex flex-col gap-4 items-start max-xl:pt-4 w-[30vh]">
+                    <div className="flex flex-col justify-between w-full text-base font-semibold">
+                        <span className="pb-4">Suma całkowita:</span>
+                        <span className="text-3xl">{formatPrice(cartTotalAmount)}</span>
                     </div>
-                    <p className="text-slate-500">VAT i przesyłka obliczane przy podsumowaniu koszyka</p>
-                    <Button label={currentUser ? loadingPaymentStep ? "Ładowanie formularza płatności" : 'Przejdź do płatności' : 'Zaloguj się, aby przejść do płatności'}
+
+                    <Button icon={MdOutlinePayment} label={currentUser ? loadingPaymentStep ? "Ładowanie formularza płatności" : 'Przejdź do płatności' : 'Zaloguj się, aby przejść do płatności'}
                         outline = {currentUser ? false : true} onClick={handlePaymentStep}
                     />
-                    <Link href={"/"} className="text-green-700 flex items-center gap-1">
-                        <MdArrowBack/><span>Kontynuuj zakupy</span>
+                    <Link href={"/"} className="text-green-700 gap-1 w-full">
+                        <div className="flex items-center justify-end gap-1 pt-6">
+                            <span className="text-md">Kontynuuj zakupy</span><VscDebugContinue size={25}/>
+                        </div>
+
                     </Link>
                 </div>
             </div>
